@@ -1,0 +1,58 @@
+
+Система мультиагентов для торговли на T Инвестициях (T Bank Invest API)
+Это полноценный дизайн production-ready архитектуры. Система построена на принципах разделения ответственности, жёсткого risk-management и human-in-the-loop. Она использует официальный T Bank Invest API (gRPC + REST, sandbox + боевой режим) и современные multi-agent фреймворки 2026 года.
+
+
+Агент	Роль	Основные задачи	Инструменты
+Market Data Agent	Сбор и нормализация данных	Котировки, стаканы, свечи, объёмы, стакан, последние сделки, инструменты	T Invest MarketDataStream, GetCandles, GetOrderBook, GetLastPrices
+Research & News Agent	Фундаментальный и новостной анализ	Новости, отчёты эмитентов, макроэкономика, sentiment, корпоративные события	T Invest + внешние источники (Interfax, ТАСС, RSS, LLM-суммаризация)
+Strategy & Signal Agent	Генерация торговых сигналов	Технический анализ, ML-модели, мульти-таймфрейм, комбинация сигналов (RSI, MA, order flow и т.д.)	Собственные стратегии + backtest-модуль
+Risk & Portfolio Agent	Контроль рисков (самый важный)	Позиционный риск, VaR, max drawdown, корреляции, лимиты по инструментам/секторам, маржа	GetPortfolio, GetPositions, собственные risk-модели
+Execution Agent	Выставление и управление ордерами	Market/Limit/Stop-ордера, частичное исполнение, отмена, trailing stop	PostOrder, CancelOrder, GetOrders, OrderStateStream
+Monitoring & Reporting Agent	Наблюдение и отчётность	PnL в реальном времени, алерты, дневные/недельные отчёты, логирование всех решений	Telegram/Email/Webhook + база данных
+Supervisor / Orchestrator	Координация	Принятие финального решения, маршрутизация задач, human-approval, откат	LangGraph State
+
+
+\tinvest_agents/
+│
+├── agents/                          # Все агенты
+│   ├── __init__.py
+│   ├── market_data.py               # Market Data Agent
+│   ├── research_news.py             # Research & News Agent
+│   ├── strategy_signal.py           # Strategy & Signal Agent
+│   ├── risk_portfolio.py            # Risk & Portfolio Agent (самый важный)
+│   ├── execution.py                 # Execution Agent
+│   ├── monitoring.py                # Monitoring & Reporting Agent
+│   └── supervisor.py                # Supervisor / Orchestrator (LangGraph)
+│
+├── core/                            # Ядро системы
+│   ├── __init__.py
+│   ├── client.py                    # Единый TBank Invest клиент (sandbox + prod)
+│   ├── config.py                    # Конфигурация (токены, лимиты, режимы)
+│   ├── state.py                     # Состояние LangGraph
+│   ├── risk_models.py               # Модели риска (VaR, лимиты и т.д.)
+│   └── exceptions.py                # Кастомные исключения
+│
+├── tools/                           # Инструменты, которые используют агенты
+│   ├── __init__.py
+│   ├── market_tools.py
+│   ├── news_tools.py
+│   ├── order_tools.py
+│   └── portfolio_tools.py
+│
+├── data/                            # Данные (свечи, новости, бэктесты)
+│   ├── candles/
+│   ├── news/
+│   └── backtests/
+│
+├── logs/                            # Логи всех решений и сделок
+│
+├── tests/                           # Тесты
+│   ├── __init__.py
+│   └── test_agents.py
+│
+├── .env.example                     # Пример файла с секретами
+├── .env                             # Твой реальный файл (не коммитить!)
+├── requirements.txt
+├── main.py                          # Точка входа
+└── README.md
