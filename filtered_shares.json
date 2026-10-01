@@ -1,0 +1,695 @@
+[
+  {
+    "figi": "BBG000K3STR7",
+    "ticker": "APTK",
+    "name": "Аптечная сеть 36,6",
+    "lot": 10,
+    "last_price": 5.95
+  },
+  {
+    "figi": "BBG004S68BR5",
+    "ticker": "NMTP",
+    "name": "НМТП",
+    "lot": 100,
+    "last_price": 6.88
+  },
+  {
+    "figi": "TCS20A0J2QG8",
+    "ticker": "BLNG",
+    "name": "Белон",
+    "lot": 100,
+    "last_price": 7.31
+  },
+  {
+    "figi": "TCS10A0JR6A6",
+    "ticker": "RBCM",
+    "name": "РБК",
+    "lot": 100,
+    "last_price": 7.34
+  },
+  {
+    "figi": "BBG004S68614",
+    "ticker": "AFKS",
+    "name": "АФК Система",
+    "lot": 100,
+    "last_price": 7.42
+  },
+  {
+    "figi": "BBG000BBV4M5",
+    "ticker": "CNTL",
+    "name": "Центральный Телеграф",
+    "lot": 100,
+    "last_price": 8.3
+  },
+  {
+    "figi": "BBG009GSYN76",
+    "ticker": "CBOM",
+    "name": "МКБ",
+    "lot": 100,
+    "last_price": 9.63
+  },
+  {
+    "figi": "TCS00A0ZZAC4",
+    "ticker": "SVCB",
+    "name": "Совкомбанк",
+    "lot": 100,
+    "last_price": 9.79
+  },
+  {
+    "figi": "BBG000NLC9Z6",
+    "ticker": "LSNG",
+    "name": "Россети Ленэнерго",
+    "lot": 100,
+    "last_price": 13.54
+  },
+  {
+    "figi": "TCS00A105BN4",
+    "ticker": "GECO",
+    "name": "Генетико",
+    "lot": 10,
+    "last_price": 14.1
+  },
+  {
+    "figi": "BBG0047315D0",
+    "ticker": "SNGS",
+    "name": "Сургутнефтегаз",
+    "lot": 100,
+    "last_price": 14.93
+  },
+  {
+    "figi": "BBG0029SG1C1",
+    "ticker": "KZOSP",
+    "name": "Казаньоргсинтез - акции привилегированные",
+    "lot": 10,
+    "last_price": 15.44
+  },
+  {
+    "figi": "BBG000DBD6F6",
+    "ticker": "KLSB",
+    "name": "Калужская сбытовая компания",
+    "lot": 100,
+    "last_price": 18.02
+  },
+  {
+    "figi": "BBG000FWGSZ5",
+    "ticker": "IRKT",
+    "name": "Яковлев",
+    "lot": 100,
+    "last_price": 18.28
+  },
+  {
+    "figi": "BBG004S68B31",
+    "ticker": "ALRS",
+    "name": "АЛРОСА",
+    "lot": 10,
+    "last_price": 18.57
+  },
+  {
+    "figi": "TCS90A0JVBT9",
+    "ticker": "UWGN",
+    "name": "ОВК",
+    "lot": 1,
+    "last_price": 19.22
+  },
+  {
+    "figi": "TCS50A10C1L6",
+    "ticker": "ETLN",
+    "name": "Эталон Груп",
+    "lot": 1,
+    "last_price": 19.94
+  },
+  {
+    "figi": "BBG004S68507",
+    "ticker": "MAGN",
+    "name": "Магнитогорский металлургический комбинат",
+    "lot": 10,
+    "last_price": 20.97
+  },
+  {
+    "figi": "BBG008F2T3T2",
+    "ticker": "RUAL",
+    "name": "РУСАЛ",
+    "lot": 10,
+    "last_price": 25.15
+  },
+  {
+    "figi": "TCS00A1002V2",
+    "ticker": "EUTR",
+    "name": "ЕвроТранс",
+    "lot": 1,
+    "last_price": 29.8
+  },
+  {
+    "figi": "BBG004S683W7",
+    "ticker": "AFLT",
+    "name": "Аэрофлот",
+    "lot": 10,
+    "last_price": 31.53
+  },
+  {
+    "figi": "BBG002B298N6",
+    "ticker": "YAKG",
+    "name": "ЯТЭК",
+    "lot": 10,
+    "last_price": 32.05
+  },
+  {
+    "figi": "BBG004S68598",
+    "ticker": "MTLR",
+    "name": "Мечел",
+    "lot": 1,
+    "last_price": 35.16
+  },
+  {
+    "figi": "BBG004S68FR6",
+    "ticker": "MTLRP",
+    "name": "Мечел - Привилегированные акции",
+    "lot": 10,
+    "last_price": 35.2
+  },
+  {
+    "figi": "BBG000GQSVC2",
+    "ticker": "NKNCP",
+    "name": "Нижнекамскнефтехим (привилегированные)",
+    "lot": 10,
+    "last_price": 35.52
+  },
+  {
+    "figi": "BBG002458LF8",
+    "ticker": "SELG",
+    "name": "Селигдар",
+    "lot": 10,
+    "last_price": 36.57
+  },
+  {
+    "figi": "BBG004S682Z6",
+    "ticker": "RTKM",
+    "name": "Ростелеком",
+    "lot": 10,
+    "last_price": 39.5
+  },
+  {
+    "figi": "BBG004S685M3",
+    "ticker": "RTKMP",
+    "name": "Ростелеком - Привилегированные акции",
+    "lot": 10,
+    "last_price": 40.55
+  },
+  {
+    "figi": "TCS00A105EX7",
+    "ticker": "WUSH",
+    "name": "Whoosh",
+    "lot": 1,
+    "last_price": 40.81
+  },
+  {
+    "figi": "BBG004S681M2",
+    "ticker": "SNGSP",
+    "name": "Сургутнефтегаз - привилегированные акции",
+    "lot": 10,
+    "last_price": 42.16
+  },
+  {
+    "figi": "TCS00A109B25",
+    "ticker": "OZPH",
+    "name": "Озон Фармацевтика",
+    "lot": 10,
+    "last_price": 42.65
+  },
+  {
+    "figi": "TCS00A10CRQ4",
+    "ticker": "GLRX",
+    "name": "Глоракс",
+    "lot": 1,
+    "last_price": 43.23
+  },
+  {
+    "figi": "BBG004S68CP5",
+    "ticker": "MVID",
+    "name": "М.Видео",
+    "lot": 1,
+    "last_price": 43.8
+  },
+  {
+    "figi": "TCS10A0JNAB6",
+    "ticker": "ABIO",
+    "name": "Артген",
+    "lot": 10,
+    "last_price": 44.58
+  },
+  {
+    "figi": "BBG0029SFXB3",
+    "ticker": "KZOS",
+    "name": "Казаньоргсинтез",
+    "lot": 10,
+    "last_price": 44.7
+  },
+  {
+    "figi": "BBG000GQSRR5",
+    "ticker": "NKNC",
+    "name": "Нижнекамскнефтехим",
+    "lot": 10,
+    "last_price": 44.75
+  },
+  {
+    "figi": "TCS03A0ZYD22",
+    "ticker": "GTRK",
+    "name": "ГТМ",
+    "lot": 10,
+    "last_price": 45.9
+  },
+  {
+    "figi": "TCS00A107J11",
+    "ticker": "DELI",
+    "name": "Делимобиль",
+    "lot": 1,
+    "last_price": 46.15
+  },
+  {
+    "figi": "BBG004730ZJ9",
+    "ticker": "VTBR",
+    "name": "Банк ВТБ",
+    "lot": 1,
+    "last_price": 50.4
+  },
+  {
+    "figi": "BBG000LNHHJ9",
+    "ticker": "KMAZ",
+    "name": "КАМАЗ",
+    "lot": 10,
+    "last_price": 50.7
+  },
+  {
+    "figi": "TCS00A0ZZBC2",
+    "ticker": "SOFL",
+    "name": "Софтлайн",
+    "lot": 10,
+    "last_price": 53.88
+  },
+  {
+    "figi": "BBG004TC84Z8",
+    "ticker": "TRMK",
+    "name": "Трубная Металлургическая Компания",
+    "lot": 10,
+    "last_price": 58.56
+  },
+  {
+    "figi": "BBG000QF1Q17",
+    "ticker": "FESH",
+    "name": "ДВМП",
+    "lot": 10,
+    "last_price": 60.76
+  },
+  {
+    "figi": "TCS00A10CL72",
+    "ticker": "INCB",
+    "name": "Инкаб Холдинг",
+    "lot": 1,
+    "last_price": 64.0
+  },
+  {
+    "figi": "TCS00A108GD8",
+    "ticker": "IVAT",
+    "name": "IVA Technologies",
+    "lot": 1,
+    "last_price": 66.7
+  },
+  {
+    "figi": "BBG004S681B4",
+    "ticker": "NLMK",
+    "name": "НЛМК",
+    "lot": 10,
+    "last_price": 66.94
+  },
+  {
+    "figi": "BBG004S68DD6",
+    "ticker": "MSTT",
+    "name": "Мостотрест",
+    "lot": 10,
+    "last_price": 67.25
+  },
+  {
+    "figi": "BBG00QKJSX05",
+    "ticker": "RENI",
+    "name": "Ренессанс Страхование",
+    "lot": 10,
+    "last_price": 67.44
+  },
+  {
+    "figi": "TCS10A108K09",
+    "ticker": "VSEH",
+    "name": "ВИ.РУ",
+    "lot": 1,
+    "last_price": 69.87
+  },
+  {
+    "figi": "TCS90A0JQUZ6",
+    "ticker": "RAGR",
+    "name": "РусАгро",
+    "lot": 1,
+    "last_price": 72.32
+  },
+  {
+    "figi": "BBG000R04X57",
+    "ticker": "FLOT",
+    "name": "Совкомфлот",
+    "lot": 10,
+    "last_price": 75.13
+  },
+  {
+    "figi": "BBG00F9XX7H4",
+    "ticker": "RNFT",
+    "name": "РуссНефть",
+    "lot": 1,
+    "last_price": 77.9
+  },
+  {
+    "figi": "TCS00A108ZR8",
+    "ticker": "DATA",
+    "name": "Группа Аренадата",
+    "lot": 1,
+    "last_price": 83.16
+  },
+  {
+    "figi": "BBG004730RP0",
+    "ticker": "GAZP",
+    "name": "Газпром",
+    "lot": 10,
+    "last_price": 85.87
+  },
+  {
+    "figi": "TCS00A10CTQ0",
+    "ticker": "BAZA",
+    "name": "ГК БАЗИС",
+    "lot": 10,
+    "last_price": 105.22
+  },
+  {
+    "figi": "BBG002W2FT69",
+    "ticker": "ABRD",
+    "name": "АбрауДюрсо",
+    "lot": 10,
+    "last_price": 114.0
+  },
+  {
+    "figi": "BBG004731489",
+    "ticker": "GMKN",
+    "name": "Норильский никель",
+    "lot": 10,
+    "last_price": 119.5
+  },
+  {
+    "figi": "TCS00A106YF0",
+    "ticker": "VKCO",
+    "name": "ВК",
+    "lot": 1,
+    "last_price": 120.25
+  },
+  {
+    "figi": "TCS00A104U43",
+    "ticker": "BTBR",
+    "name": "В2В-РТС",
+    "lot": 1,
+    "last_price": 123.15
+  },
+  {
+    "figi": "BBG004S68696",
+    "ticker": "RASP",
+    "name": "Распадская",
+    "lot": 10,
+    "last_price": 123.75
+  },
+  {
+    "figi": "TCS00A107RM8",
+    "ticker": "ZAYM",
+    "name": "Займер",
+    "lot": 10,
+    "last_price": 136.5
+  },
+  {
+    "figi": "BBG004730JJ5",
+    "ticker": "MOEX",
+    "name": "Московская Биржа",
+    "lot": 10,
+    "last_price": 151.4
+  },
+  {
+    "figi": "BBG004S681W1",
+    "ticker": "MTSS",
+    "name": "МТС",
+    "lot": 10,
+    "last_price": 181.3
+  },
+  {
+    "figi": "BBG002BCQK67",
+    "ticker": "NSVZ",
+    "name": "Наука-Связь",
+    "lot": 10,
+    "last_price": 196.5
+  },
+  {
+    "figi": "RU000A106T36",
+    "ticker": "ASTR",
+    "name": "Группа Астра",
+    "lot": 1,
+    "last_price": 211.35
+  },
+  {
+    "figi": "BBG000BX7DH0",
+    "ticker": "VRSB",
+    "name": "ТНС энерго Воронеж",
+    "lot": 10,
+    "last_price": 232.5
+  },
+  {
+    "figi": "BBG000QJW156",
+    "ticker": "BSPB",
+    "name": "Банк Санкт-Петербург",
+    "lot": 10,
+    "last_price": 236.24
+  },
+  {
+    "figi": "BBG000TY1CD1",
+    "ticker": "BELU",
+    "name": "Novabev Group",
+    "lot": 1,
+    "last_price": 245.0
+  },
+  {
+    "figi": "TCS80A107UL4",
+    "ticker": "T",
+    "name": "Т-Технологии",
+    "lot": 1,
+    "last_price": 249.76
+  },
+  {
+    "figi": "BBG004730N88",
+    "ticker": "SBER",
+    "name": "Сбербанк",
+    "lot": 1,
+    "last_price": 268.52
+  },
+  {
+    "figi": "BBG0047315Y7",
+    "ticker": "SBERP",
+    "name": "Сбербанк - привилегированные акции",
+    "lot": 1,
+    "last_price": 269.17
+  },
+  {
+    "figi": "BBG000RMWQD4",
+    "ticker": "ENPG",
+    "name": "Эн+",
+    "lot": 1,
+    "last_price": 288.95
+  },
+  {
+    "figi": "TCS00A106XF2",
+    "ticker": "HNFG",
+    "name": "HENDERSON",
+    "lot": 1,
+    "last_price": 295.8
+  },
+  {
+    "figi": "BBG004731354",
+    "ticker": "ROSN",
+    "name": "Роснефть",
+    "lot": 1,
+    "last_price": 308.05
+  },
+  {
+    "figi": "BBG000W325F7",
+    "ticker": "AQUA",
+    "name": "ИНАРКТИКА",
+    "lot": 1,
+    "last_price": 333.7
+  },
+  {
+    "figi": "BBG000NLCCM3",
+    "ticker": "LSNGP",
+    "name": "Россети Ленэнерго - акции привилегированные",
+    "lot": 10,
+    "last_price": 334.0
+  },
+  {
+    "figi": "BBG00F6NKQX3",
+    "ticker": "SMLT",
+    "name": "ГК Самолет",
+    "lot": 1,
+    "last_price": 350.0
+  },
+  {
+    "figi": "BBG004S68JR8",
+    "ticker": "SVAV",
+    "name": "СОЛЛЕРС",
+    "lot": 1,
+    "last_price": 362.5
+  },
+  {
+    "figi": "BBG002B9MYC1",
+    "ticker": "KAZT",
+    "name": "КуйбышевАзот",
+    "lot": 10,
+    "last_price": 366.2
+  },
+  {
+    "figi": "BBG002B9T6Y1",
+    "ticker": "KAZTP",
+    "name": "КуйбышевАзот - Акции привилегированные",
+    "lot": 10,
+    "last_price": 366.5
+  },
+  {
+    "figi": "BBG00BGKYH17",
+    "ticker": "NKHP",
+    "name": "НКХП",
+    "lot": 10,
+    "last_price": 374.0
+  },
+  {
+    "figi": "TCS30A108JF7",
+    "ticker": "PRMD",
+    "name": "Промомед",
+    "lot": 1,
+    "last_price": 390.05
+  },
+  {
+    "figi": "BBG000MZL0Y6",
+    "ticker": "PMSB",
+    "name": "Пермэнергосбыт",
+    "lot": 10,
+    "last_price": 423.5
+  },
+  {
+    "figi": "BBG000MZL2S9",
+    "ticker": "PMSBP",
+    "name": "Пермэнергосбыт - акции привилегированные",
+    "lot": 10,
+    "last_price": 442.0
+  },
+  {
+    "figi": "BBG004S68C39",
+    "ticker": "LSRG",
+    "name": "Группа ЛСР",
+    "lot": 1,
+    "last_price": 498.0
+  },
+  {
+    "figi": "BBG004S684M6",
+    "ticker": "SIBN",
+    "name": "Газпром нефть",
+    "lot": 1,
+    "last_price": 512.85
+  },
+  {
+    "figi": "BBG004S68829",
+    "ticker": "TATNP",
+    "name": "Татнефть - привилегированные акции",
+    "lot": 1,
+    "last_price": 541.8
+  },
+  {
+    "figi": "BBG004RVFFC0",
+    "ticker": "TATN",
+    "name": "Татнефть",
+    "lot": 1,
+    "last_price": 560.0
+  },
+  {
+    "figi": "BBG003LYCMB1",
+    "ticker": "SFIN",
+    "name": "ЭсЭфАй",
+    "lot": 1,
+    "last_price": 562.8
+  },
+  {
+    "figi": "BBG004S68BH6",
+    "ticker": "PIKK",
+    "name": "ПИК-Специализированный застройщик",
+    "lot": 1,
+    "last_price": 573.2
+  },
+  {
+    "figi": "TCS00A107JE2",
+    "ticker": "GEMC",
+    "name": "ЮМГ",
+    "lot": 1,
+    "last_price": 607.1
+  },
+  {
+    "figi": "BBG00475K6C3",
+    "ticker": "CHMF",
+    "name": "Северсталь",
+    "lot": 1,
+    "last_price": 614.4
+  },
+  {
+    "figi": "TCS00A10ANA1",
+    "ticker": "CNRU",
+    "name": "Циан",
+    "lot": 1,
+    "last_price": 630.6
+  },
+  {
+    "figi": "TCS00A0ZZFS9",
+    "ticker": "LEAS",
+    "name": "Европлан",
+    "lot": 1,
+    "last_price": 669.7
+  },
+  {
+    "figi": "BBG004S686N0",
+    "ticker": "BANEP",
+    "name": "Башнефть - привилегированные акции",
+    "lot": 1,
+    "last_price": 753.5
+  },
+  {
+    "figi": "TCS00A0JRH43",
+    "ticker": "MBNK",
+    "name": "МТС-Банк",
+    "lot": 1,
+    "last_price": 908.5
+  },
+  {
+    "figi": "BBG000NLB2G3",
+    "ticker": "KROT",
+    "name": "Красный Октябрь",
+    "lot": 10,
+    "last_price": 916.0
+  },
+  {
+    "figi": "BBG00475KKY8",
+    "ticker": "NVTK",
+    "name": "НОВАТЭК",
+    "lot": 1,
+    "last_price": 933.4
+  },
+  {
+    "figi": "TCS00A103X66",
+    "ticker": "POSI",
+    "name": "Группа Позитив",
+    "lot": 1,
+    "last_price": 940.0
+  }
+]
