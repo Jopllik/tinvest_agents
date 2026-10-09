@@ -83,16 +83,38 @@ class ExecutionAgent:
                     signal_id=signal.signal_id,
                 )
 
-        if signal.action == "buy":
-            if position is not None:
+                qty = 0
+        if position is not None:
+            qty = int(position.quantity)
+
+        if signal.action == "sell":
+            if qty <= 0:
                 return ExecutionResult(
                     success=False,
                     skipped=True,
-                    message=f"BUY пропущен: позиция по {label} уже открыта "
-                            f"({position.quantity} шт.)",
+                    message=f"SELL пропущен: нет длинной позиции по {label} (qty={qty})",
                     signal_id=signal.signal_id,
                 )
-            if signal.order_value_rub >= 1000:
+            if qty < signal.quantity:
+                return ExecutionResult(
+                    success=False,
+                    skipped=True,
+                    message=(
+                        f"SELL пропущен: в портфеле {qty} шт., "
+                        f"а сигнал просит {signal.quantity}"
+                    ),
+                    signal_id=signal.signal_id,
+                )
+
+        if signal.action == "buy":
+            if qty > 0:
+                return ExecutionResult(
+                    success=False,
+                    skipped=True,
+                    message=f"BUY пропущен: лонг по {label} уже открыт ({qty} шт.)",
+                    signal_id=signal.signal_id,
+                )
+            if qty == 0 and signal.order_value_rub >= 1000:
                 return ExecutionResult(
                     success=False,
                     skipped=True,

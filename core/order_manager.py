@@ -28,8 +28,19 @@ def place_market_order(
     2. Проверяет торговый статус инструмента
     3. Выставляет ордер
     """
-    # 1. Проверка рисков
-    is_new_position = direction == "buy"
+        # 1. Проверка рисков
+    existing = None
+    try:
+        portfolio = get_portfolio()
+        for pos in portfolio.positions:
+            if pos.figi == figi and pos.quantity != 0:
+                existing = pos
+                break
+    except Exception:
+        existing = None
+
+    # Новая позиция только если по этому FIGI сейчас ничего нет.
+    is_new_position = existing is None
     risk_check = risk_manager.check_order(
         order_value_rub=order_value_rub,
         is_new_position=is_new_position
