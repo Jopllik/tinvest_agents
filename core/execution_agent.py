@@ -64,29 +64,10 @@ class ExecutionAgent:
             )
 
         # --- Правила безопасности ---
-        if signal.action == "sell":
-            if position is None:
-                return ExecutionResult(
-                    success=False,
-                    skipped=True,
-                    message=f"SELL пропущен: нет позиции по {label}",
-                    signal_id=signal.signal_id,
-                )
-            if position.quantity < signal.quantity:
-                return ExecutionResult(
-                    success=False,
-                    skipped=True,
-                    message=(
-                        f"SELL пропущен: в портфеле {position.quantity} шт., "
-                        f"а сигнал просит {signal.quantity}"
-                    ),
-                    signal_id=signal.signal_id,
-                )
-
-                qty = 0
+        qty = 0
         if position is not None:
             qty = int(position.quantity)
-
+            
         if signal.action == "sell":
             if qty <= 0:
                 return ExecutionResult(

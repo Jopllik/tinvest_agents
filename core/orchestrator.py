@@ -14,7 +14,7 @@ class Orchestrator:
     Запускает аналитика → получает сигналы → передаёт их исполнителю.
     """
 
-        def __init__(self):
+    def __init__(self):
         self.name = "Orchestrator"
         self.quantity = 1  # по сколько лотов торговать
 
@@ -69,7 +69,7 @@ class Orchestrator:
                       f"SMA15: {result.sma_slow:.2f}")
                 print(f"  {result.reason}")
 
-                                if result.signal:
+                if result.signal:
                     signals_found += 1
                     print(f"  Есть сигнал → передаём в ExecutionAgent")
                     exec_result = execution_agent.execute(result.signal)
