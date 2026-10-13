@@ -92,7 +92,7 @@ class AnalysisAgent:
         prev_sma_slow = self._calculate_sma(closes[:-1], self.slow_period)
 
         if None in (sma_fast, sma_slow, prev_sma_fast, prev_sma_slow):
-            return AnalysisResult(
+                return AnalysisResult(
                 signal=None,
                 reason="Не удалось посчитать SMA",
                 current_price=current_price,
@@ -104,14 +104,29 @@ class AnalysisAgent:
         signal = None
         reason = "Нет сигнала (нет пересечения)"
 
-        # Быстрая SMA пересекла медленную снизу вверх → BUY
-        if prev_sma_fast <= prev_sma_slow and sma_fast > sma_slow:
+        min_gap = sma_slow * 0.0015
+        gap = abs(sma_fast - sma_slow)
+        crossed_up = prev_sma_fast <= prev_sma_slow and sma_fast > sma_slow
+        crossed_down = prev_sma_fast >= prev_sma_slow and sma_fast < sma_slow
+
+        if (crossed_up or crossed_down) and gap < min_gap:
+            reason = f"Пересечение слишком слабое: разрыв {gap:.4f} < {min_gap:.4f}"
+        elif crossed_up:
             signal = TradeSignal(
                 action="buy",
                 figi=figi,
                 quantity=quantity,
                 order_value_rub=order_value_rub,
                 reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) снизу вверх"
+            )
+            reason = signal.reason
+        elif crossed_down:
+            signal = TradeSignal(
+                action="sell",
+                figi=figi,
+                quantity=quantity,
+                order_value_rub=order_value_rub,
+                reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) сверху вниз"
             )
             reason = signal.reason
 
