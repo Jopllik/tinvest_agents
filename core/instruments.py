@@ -21,25 +21,23 @@ class TradableShare:
     currency: str
     class_code: str
     last_price: float = 0.0
+    lot_cost: float = 0.0
 
 
-def get_filtered_shares(min_price: float = 5.0, max_price: float = 1000.0) -> List[TradableShare]:
+def get_filtered_shares(max_lot_cost: float = 1000.0) -> List[TradableShare]:
     """
     Акции:
-    - доступны неквалифицированным (for_qual_investor_flag = False)
+    - доступны неквалифицированным
     - без обязательных тестов
-    - api_trade_available = True
-    - buy_available = True
-    - валюта RUB
-    - class_code = TQBR
-    - текущая цена < max_price
+    - api_trade_available и buy_available
+    - валюта RUB, режим TQBR
+    - цена лота = цена акции * размер лота, и она от 0 до max_lot_cost включительно
     """
     result = []
 
     with invest_client.get_client() as client:
-        # 1. Получаем все акции
         response = client.instruments.shares()
-        
+
         candidates = []
         for share in response.instruments:
             if not share.api_trade_available_flag:
@@ -54,40 +52,37 @@ def get_filtered_shares(min_price: float = 5.0, max_price: float = 1000.0) -> Li
                 continue
             if share.class_code != "TQBR":
                 continue
-
             candidates.append(share)
 
         print(f"Кандидатов после базовых фильтров: {len(candidates)}")
-
         if not candidates:
             return []
 
-        # 2. Получаем последние цены (можно пачками)
         figis = [s.figi for s in candidates]
-        
-        # API позволяет передавать список figi
         last_prices_resp = client.market_data.get_last_prices(figi=figis)
         price_map = {
             p.figi: quotation_to_float(p.price)
             for p in last_prices_resp.last_prices
         }
 
-        # 3. Фильтруем по цене
         for share in candidates:
             price = price_map.get(share.figi, 0.0)
-            if min_price <= price < max_price:
-                result.append(TradableShare(
-                    figi=share.figi,
-                    ticker=share.ticker,
-                    name=share.name,
-                    lot=share.lot,
-                    currency=share.currency,
-                    class_code=share.class_code,
-                    last_price=price
-                ))
+            lot = share.lot or 1
+            lot_cost = price * lot
+            if price <= 0 or lot_cost <= 0 or lot_cost > max_lot_cost:
+                continue
+            result.append(TradableShare(
+                figi=share.figi,
+                ticker=share.ticker,
+                name=share.name,
+                lot=lot,
+                currency=share.currency,
+                class_code=share.class_code,
+                last_price=price,
+                lot_cost=lot_cost,
+            ))
 
-    # Сортируем по цене (от дешёвых к дорогим)
-    result.sort(key=lambda x: x.last_price)
+    result.sort(key=lambda x: x.lot_cost)
     return result
 
 
@@ -98,7 +93,8 @@ def save_shares(shares: List[TradableShare], filename: str = "filtered_shares.js
             "ticker": s.ticker,
             "name": s.name,
             "lot": s.lot,
-            "last_price": round(s.last_price, 2)
+            "last_price": round(s.last_price, 4),
+            "lot_cost": round(s.lot_cost, 2),
         }
         for s in shares
     ]
