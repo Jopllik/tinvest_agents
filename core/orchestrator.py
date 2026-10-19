@@ -44,16 +44,22 @@ class Orchestrator:
         # Показываем текущий портфель
         try:
             portfolio = get_portfolio()
+            positions_count = len(portfolio.positions)
             print(f"Портфель: {portfolio.total_value:,.2f} ₽ | "
                   f"Свободно: {portfolio.free_cash:,.2f} ₽ | "
-                  f"Позиций: {len(portfolio.positions)}")
+                  f"Позиций: {positions_count}")
         except Exception as e:
             print(f"Не удалось получить портфель: {e}")
+            print("Покупки не ищем: портфель не прочитан.")
+            return
+
+        if positions_count > 4:
+            print("Позиций больше 4 — новые покупки не ищем.")
+            print("=" * 60)
+            return
 
         print("-" * 60)
-
         signals_found = 0
-
         for figi, name, approx_price in self.instruments:
             print(f"\n→ Анализируем {name} ({figi})")
 
