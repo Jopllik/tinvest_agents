@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 from core.analysis_agent import analysis_agent, AnalysisResult
-from core.execution_agent import execution_agent
+from core.execution_agent import execution_agent, TradeSignal
 from core.portfolio import get_portfolio
 from core.instruments import load_shares_from_file
 
@@ -52,6 +52,32 @@ class Orchestrator:
             print(f"Не удалось получить портфель: {e}")
             print("Покупки не ищем: портфель не прочитан.")
             return
+        for pos in portfolio.positions:
+            if pos.quantity <= 0 or pos.average_price <= 0 or pos.current_price <= 0:
+                continue
+            drop = (pos.current_price - pos.average_price) / pos.average_price
+            if drop > -0.01:
+                continue
+            print(
+                f"Стоп −1%: {pos.ticker or pos.name} "
+                f"покупка {pos.average_price:.2f} → сейчас {pos.current_price:.2f} "
+                f"({drop:.2%})"
+            )
+            stop_signal = TradeSignal(
+                action="sell",
+                figi=pos.figi,
+                ticker=pos.ticker,
+                quantity=1,
+                order_value_rub=pos.value,
+                reason="Стоп: цена на 1% ниже цены покупки",
+            )
+            exec_result = execution_agent.execute(stop_signal)
+            if exec_result.skipped:
+                print(f"  Пропущено: {exec_result.message}")
+            elif exec_result.success:
+                print(f"  Ордер исполнен: {exec_result.order_id}")
+            else:
+                print(f"  Ошибка исполнения: {exec_result.message}")
 
         if positions_count > 4:
             print("Позиций больше 4 — новые покупки не ищем.")
