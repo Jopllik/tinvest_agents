@@ -148,6 +148,7 @@ class Orchestrator:
                 print(f"  ⚠ Ошибка при анализе {name}: {e}")
 
         # Basket logic per rules.txt: CHE(0-100), AVE(100-500), EXP(500-1000)
+        selected = []
         if buy_signals:
             baskets = {"CHE": [], "AVE": [], "EXP": []}
             for sig_tuple in buy_signals:
@@ -161,7 +162,6 @@ class Orchestrator:
                 baskets[b].append(sig_tuple)
             print(f"\nКорзины: CHE={len(baskets.get('CHE',[]))}, AVE={len(baskets.get('AVE',[]))}, EXP={len(baskets.get('EXP',[]))}")
 
-            selected = []
             for bname in ["CHE", "AVE", "EXP"]:
                 bs = baskets.get(bname, [])
                 if bs:
@@ -184,20 +184,14 @@ class Orchestrator:
                 print("\nПредлагаем max 3 бумаги (по корзинам/strongest):")
                 for s in selected[:3]:
                     print(f"  {s[1]} ({s[2]:.0f}₽ gap={s[3]:.3f}%)")
-                print("Подтвердите покупку этих 3 бумаг? (y/n)")
-                if input().lower() == 'y':
-                    print("Human confirmed — executing buys (if auto_execute=True)")
-                    for s in selected[:3]:
-                        exec_result = execution_agent.execute(s[0])
-                        print(f"  {s[1]}: {exec_result.message}")
-                else:
-                    print("Human rejected — buys skipped per rules.txt")
+                print("Предложение будет отправлено в Telegram MonitoringAgent (buy/no).")
             else:
                 print(f"Годных <3 ({len(selected)}), предложение не отправляется.")
 
         print("\n" + "=" * 60)
-        print(f"[{self.name}] Цикл завершён | Buy-сигналов: {len(buy_signals)}")
+        print(f"[{self.name}] Цикл завершён | Buy-сигналов: {len(buy_signals)}, proposals={len(selected)}")
         print("=" * 60)
+        return selected[:3] if len(selected) >= 3 else []
 
     def run_loop(self, interval_minutes: int = 15):
         """

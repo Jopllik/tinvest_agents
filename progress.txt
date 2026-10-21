@@ -335,8 +335,19 @@
 - Тестовый прогон с human-confirm работает
 
 Не закрыто:
-- Telegram bot для уведомлений, полный monitoring, production с 5000₽, e2e tests
+- Полный production с 5000₽, e2e tests, auto_execute=True (после TG тестов)
+
+Сделано (Telegram bot):
+- agents/monitoring.py: MonitoringAgent расширен TelegramBot (pyTelegramBotAPI, token+chat_id из settings, send_buy_proposals с 3 предложениями ticker/lot_cost/gap%, InlineKeyboard buy/no)
+- При 'buy' callback: _process_buy_approval -> execution_agent.execute(TradeSignal) для каждой
+- Интеграция: orchestrator.run_once() теперь возвращает proposals (>=3 из корзин), supervisor.run_full_cycle() вызывает get_approval -> Monitoring.send_buy_proposals если proposals
+- supervisor.get_approval обновлён для TG, bot polling в daemon thread
+- Сохранён стиль (print, BaseAgent), fallback на console если нет TOKEN/CHAT_ID
+- requirements уже имел pyTelegramBotAPI, тесты импорта прошли
+- Коммит feat(monitoring): add Telegram bot for buy confirmation
+- progress.txt обновлён, push выполнен
 
 Следующий шаг:
-- Telegram bot (уведомления + reply y/n), monitoring agent, production prep
+- production prep, e2e tests с реальным TG confirmation, set auto_execute=True после верификации
 ===========================================================
+
