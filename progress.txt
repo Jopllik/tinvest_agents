@@ -364,5 +364,19 @@
 Следующий шаг:
 - e2e TG tests, production, auto_execute=True после верификации
 ===========================================================
+===========================================================
+Дата: 2026-10-21 15:50
+Сессия: TG bot verification with portfolio response
+------------------------------------------------------------
+Сделано:
+- Callback buy/no fixed in monitoring.py (handlers now respond with message)
+- После решения (buy/no) отправляется вывод с портфелем (баланс, позиции, следующий цикл)
+- Для buy: "ордера выставлены, баланс, позиции"; для no: "покупки отклонены, состояние портфеля"
+- Тест прошёл, уведомления и кнопки работают, portfolio info приходит в TG
+- Обновлён progress.txt, commit fix(monitoring): add portfolio response after decision, push
+
+Следующий шаг:
+- e2e TG tests with real confirmation, production prep, set auto_execute=True after verification
+===========================================================
 
 
