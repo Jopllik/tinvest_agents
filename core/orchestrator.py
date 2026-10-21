@@ -28,7 +28,7 @@ class Orchestrator:
             ]
         else:
             self.instruments = [
-                (s["figi"], s["ticker"], s.get("lot_cost", s.get("last_price", 300.0)))
+                (s["figi"], f"{s['ticker']} {s.get('name', '')}".strip(), s.get("lot_cost", s.get("last_price", 300.0)))
                 for s in shares
             ]
             print(f"Загружено {len(self.instruments)} акций из filtered_shares.json")

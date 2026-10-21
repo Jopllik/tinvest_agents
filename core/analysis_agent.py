@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from t_tech.invest import CandleInterval, HistoricCandle
 from core.client import invest_client
 from core.execution_agent import TradeSignal
+from core.portfolio import get_portfolio
 
 
 def quotation_to_decimal(q):
@@ -121,25 +122,34 @@ class AnalysisAgent:
             )
             reason = signal.reason
         elif crossed_down:
-            signal = TradeSignal(
-                action="sell",
-                figi=figi,
-                quantity=quantity,
-                order_value_rub=order_value_rub,
-                reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) сверху вниз"
-            )
-            reason = signal.reason
+            # Only generate sell for owned LONG positions (per user request)
+            portfolio = get_portfolio()
+            if not any(p.figi == figi for p in getattr(portfolio, 'positions', [])):
+                reason = f"No position for {figi} — no sell signal"
+            else:
+                signal = TradeSignal(
+                    action="sell",
+                    figi=figi,
+                    quantity=quantity,
+                    order_value_rub=order_value_rub,
+                    reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) сверху вниз"
+                )
+                reason = signal.reason
 
-        # Быстрая SMA пересекла медленную сверху вниз → SELL
+        # Быстрая SMA пересекла медленную сверху вниз → SELL (only for owned)
         elif prev_sma_fast >= prev_sma_slow and sma_fast < sma_slow:
-            signal = TradeSignal(
-                action="sell",
-                figi=figi,
-                quantity=quantity,
-                order_value_rub=order_value_rub,
-                reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) сверху вниз"
-            )
-            reason = signal.reason
+            portfolio = get_portfolio()
+            if not any(p.figi == figi for p in getattr(portfolio, 'positions', [])):
+                reason = f"No position for {figi} — no sell signal"
+            else:
+                signal = TradeSignal(
+                    action="sell",
+                    figi=figi,
+                    quantity=quantity,
+                    order_value_rub=order_value_rub,
+                    reason=f"Быстрая SMA({self.fast_period}) пересекла медленную SMA({self.slow_period}) сверху вниз"
+                )
+                reason = signal.reason
 
         return AnalysisResult(
             signal=signal,
