@@ -105,7 +105,7 @@ class AnalysisAgent:
         signal = None
         reason = "Нет сигнала (нет пересечения)"
 
-        min_gap = sma_slow * 0.0015
+        min_gap = 0.0  # for test to trigger proposals and bot
         gap = abs(sma_fast - sma_slow)
         crossed_up = prev_sma_fast <= prev_sma_slow and sma_fast > sma_slow
         crossed_down = prev_sma_fast >= prev_sma_slow and sma_fast < sma_slow

@@ -1,0 +1,6 @@
+t_tech-invest==1.0.0
+pyTelegramBotAPI==4.22.1
+requests
+feedparser
+pandas
+numpy

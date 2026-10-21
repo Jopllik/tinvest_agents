@@ -3,6 +3,8 @@ from core.risk_manager import risk_manager
 from core.risk_models import risk_models
 from agents.base_agent import BaseAgent
 from agents.research_news import ResearchNewsAgent
+from agents.monitoring import monitoring_agent
+from core.execution_agent import TradeSignal
 from agents.monitoring import MonitoringAgent
 
 
@@ -52,7 +54,17 @@ class Supervisor(BaseAgent):
         proposals = self.orchestrator.run_once()
         if proposals:
             print(f"[{self.name}] Получено {len(proposals)} proposals — вызов MonitoringAgent для TG подтверждения")
+            monitoring_agent.send_buy_proposals(proposals)
             self.get_approval(proposals)
+        else:
+            # Mock for TG test (remove after)
+            mock_proposals = [
+                (TradeSignal("buy", "BBG000RMWQD4", 1, 500, "mock"), "EN+ (Эн+)", 500, 0.5),
+                (TradeSignal("buy", "BBG004TC84Z8", 1, 600, "mock"), "Московский Кредитный Банк", 600, 0.3),
+                (TradeSignal("buy", "BBG004S68B31", 1, 700, "mock"), "АЛРОСА", 700, 0.2)
+            ]
+            monitoring_agent.send_buy_proposals(mock_proposals)
+            print(f"[{self.name}] Mock proposals sent to TG bot for test.")
         self.state["last_decision"] = "cycle_completed"
         self.state["cycle_count"] += 1
         print(f"[{self.name}] Цикл завершён. State: {self.state}")
