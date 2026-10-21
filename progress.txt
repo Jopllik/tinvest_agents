@@ -270,4 +270,21 @@
 
 Следующий шаг:
 - Добавить human-confirm в orchestrator/supervisor, обновить tests, полный dry-run
+===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: human-confirm implementation
+------------------------------------------------------------
+Сделано:
+- Реализован human-confirm в core/orchestrator.py (input y/n для 3 предложений из корзин, execute если подтверждено)
+- Заменён STUB на реальный console input per rules.txt (человек подтверждает покупки на старте)
+- Обновлён todowrite
+- Коммит feat(orchestrator): add human confirmation for buys...
+- Добавлена эта запись в progress.txt (workflow: code + log + push)
+
+Не закрыто:
+- Полная supervisor.py (LangGraph), execution_agent refinements, deprecation warnings, e2e tests, dry-run с реальными подтверждениями
+
+Следующий шаг:
+- Реализовать supervisor.py, обновить tests, полный dry-run оркестратора
 ============================================================
