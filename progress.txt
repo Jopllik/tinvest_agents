@@ -321,7 +321,24 @@
 - Telegram bot для уведомлений/подтверждений, monitoring agent, production с 5000₽, e2e tests
 
 Следующий шаг:
-- Telegram bot для human-confirm (уведомления + reply), monitoring agent, production prep
+- Telegram bot для уведомлений/подтверждений, monitoring agent, production prep
+===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: sell check for owned positions + name format
+------------------------------------------------------------
+Сделано:
+- В analysis_agent.py добавлен check позиции перед генерацией sell-сигнала (только для owned LONG per rules.txt "компании в портфеле")
+- В orchestrator.py print теперь "ticker Полное название" (CBOM Московский Кредитный Банк)
+- Восстановлен оригинальный SMA gap filter (0.15%) после тестов
+- Все изменения закоммичены, progress обновлён, запушено
+- Тестовый прогон с human-confirm работает
+
+Не закрыто:
+- Telegram bot для уведомлений, полный monitoring, production с 5000₽, e2e tests
+
+Следующий шаг:
+- Telegram bot (уведомления + reply y/n), monitoring agent, production prep
 ===========================================================
 ===========================================================
 Дата: 2026-10-21
