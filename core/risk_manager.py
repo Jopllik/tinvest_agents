@@ -6,6 +6,7 @@ from typing import Optional
 
 from core.client import invest_client
 from core.config import settings
+from core.risk_models import risk_models
 
 
 @dataclass
@@ -25,8 +26,9 @@ class RiskManager:
         self.max_position_size_percent = settings.MAX_POSITION_SIZE_PERCENT
         self.max_daily_loss_percent = settings.MAX_DAILY_LOSS_PERCENT
         self.max_drawdown_percent = settings.MAX_DRAWDOWN_PERCENT
-        self.max_open_positions = settings.MAX_OPEN_POSITIONS
+        self.max_open_positions = risk_models.get_max_positions()
         self.max_order_value_rub = settings.MAX_ORDER_VALUE_RUB
+        self.capital_rub = settings.CAPITAL_RUB
 
     def get_portfolio_value(self) -> float:
         """Текущая стоимость портфеля в рублях"""
@@ -57,11 +59,18 @@ class RiskManager:
         is_new_position: bool = True,
     ) -> RiskCheckResult:
         """
-        Главная проверка перед выставлением ордера.
+        Главная проверка перед выставлением ордера (интегрирует risk_models).
         
         :param order_value_rub: Сумма ордера в рублях
         :param is_new_position: True, если это открытие новой позиции (а не увеличение существующей)
         """
+        # Capital check per rules.txt
+        if not risk_models.check_capital(self.get_portfolio_value() or self.capital_rub):
+            return RiskCheckResult(
+                allowed=False,
+                reason=f"Капитал ниже {self.capital_rub} ₽ (rules.txt)"
+            )
+
         # 1. Проверка максимальной суммы одной заявки
         if order_value_rub > self.max_order_value_rub:
             return RiskCheckResult(

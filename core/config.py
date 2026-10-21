@@ -21,8 +21,9 @@ class Settings(BaseSettings):
     MAX_POSITION_SIZE_PERCENT: float = 10.0          # Макс. размер одной позиции (% от портфеля)
     MAX_DAILY_LOSS_PERCENT: float = 3.0              # Макс. дневной убыток (%)
     MAX_DRAWDOWN_PERCENT: float = 8.0                # Макс. просадка портфеля (%)
-    MAX_OPEN_POSITIONS: int = 5                      # Макс. количество открытых позиций
-    MAX_ORDER_VALUE_RUB: float = 50_000.0            # Макс. сумма одной заявки в рублях
+    MAX_OPEN_POSITIONS: int = 7                      # Макс. количество открытых позиций (rules.txt)
+    MAX_ORDER_VALUE_RUB: float = 1000.0              # Макс. стоимость 1 лота (rules.txt)
+    CAPITAL_RUB: int = 5000                          # Стартовый капитал
 
     # === Trading ===
     DEFAULT_CURRENCY: str = "rub"
