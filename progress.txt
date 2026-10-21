@@ -379,4 +379,15 @@
 - e2e TG tests with real confirmation, production prep, set auto_execute=True after verification
 ===========================================================
 
+Дата: 2026-10-21
+Сессия: fix callback in monitoring.py
+------------------------------------------------------------
+Сделано:
+- Использованы grep/read перед правками monitoring.py (callback, handlers, _send_decision_result)
+- Добавлены debug prints в handle_callback, handler теперь всегда отвечает на callback_query
+- Обновлён _send_decision_result: report с балансом, позициями, следующим циклом; buy: "ордера выставлены, баланс X, позиции Y"; no: "покупки отклонены, состояние портфеля"
+- Сохранён стиль кода, task/todowrite pattern (grep+read+edit), test_orchestrator запущен (уведомления+handlers работают)
+- progress.txt обновлён, коммит fix(monitoring): ensure callback responds with portfolio report, push
+===========================================================
+
 

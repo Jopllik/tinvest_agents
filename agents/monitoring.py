@@ -24,16 +24,22 @@ class MonitoringAgent(BaseAgent):
     def _register_handlers(self):
         @self.bot.callback_query_handler(func=lambda call: True)
         def handle_callback(call):
-            if str(call.message.chat.id) != str(self.chat_id):
+            chat_id = 'N/A'
+            if call.message and hasattr(call.message, 'chat'):
+                chat_id = call.message.chat.id
+            print(f"[{self.name}] DEBUG: callback triggered data={call.data} chat={chat_id}")
+            if call.message and hasattr(call.message, 'chat') and str(call.message.chat.id) != str(self.chat_id):
+                self.bot.answer_callback_query(call.id)
+                print(f"[{self.name}] DEBUG: chat id mismatch")
                 return
+            self.bot.answer_callback_query(call.id, "✅ Подтверждено" if call.data == "buy" else "❌ Отклонено")
             if call.data == "buy":
-                self.bot.answer_callback_query(call.id, "✅ Подтверждено")
                 self._process_buy_approval()
                 self._send_decision_result("buy")
             elif call.data == "no":
-                self.bot.answer_callback_query(call.id, "❌ Отклонено")
                 self.pending_proposals = []
                 self._send_decision_result("no")
+            print(f"[{self.name}] DEBUG: callback handled")
         print(f"[{self.name}] Telegram handlers registered")
 
     def _process_buy_approval(self):
@@ -69,10 +75,14 @@ class MonitoringAgent(BaseAgent):
                 print(f"  {pos.ticker:6} {pos.name or '':20} {pos.quantity:6} {side} {pos.value:10,.2f} ₽")
         if not self.bot or not self.chat_id:
             return
+        bal = f"{portfolio.free_cash:,.0f}"
+        pos_count = len(portfolio.positions)
         if decision == "buy":
-            result_msg = "✅ Ордера выставлены. Баланс и позиции обновлены. Следующий цикл начнётся автоматически."
+            result_msg = f"✅ ордера выставлены, баланс {bal}₽, позиции {pos_count}. Следующий цикл автоматически."
+            print(f"[{self.name}] DEBUG: buy report sent with bal={bal} pos={pos_count}")
         else:
-            result_msg = "❌ Покупки отклонены (rules.txt). Состояние портфеля выше. Следующий цикл через 1 час."
+            result_msg = f"❌ покупки отклонены, состояние портфеля: баланс {bal}₽, позиций {pos_count}, следующий цикл через 1ч."
+            print(f"[{self.name}] DEBUG: no report sent with bal={bal} pos={pos_count}")
         try:
             self.bot.send_message(self.chat_id, result_msg)
         except:
