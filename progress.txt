@@ -234,4 +234,22 @@
 
 Следующий шаг:
 - Сигнал продажи по SMA передавать только если позиция уже в плюсе на 1% или больше
+===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: basket logic, todowrite, conventional commit
+------------------------------------------------------------
+Сделано:
+- Проанализированы AGENTS.md, architecture.txt.txt, progress.txt, rules.txt
+- Обновлён todowrite + task для переноса всех правил (корзины CHE/AVE/EXP, strongest SMA, human-confirm, +1% threshold)
+- core/orchestrator.py обновлён: basket logic по lot_cost, выбор strongest signal по gap%, position checks, sell threshold
+- Коммит feat(orchestrator): implement basket logic... (conventional commits)
+- Запушено в master
+- Добавлена эта запись в progress.txt
+
+Не закрыто:
+- Полная human-confirmation flow, обновление risk_manager/execution_agent, тесты, deprecation warnings
+
+Следующий шаг:
+- Обновить risk_manager.py + tests, запустить lint/test_*.py
 ============================================================
