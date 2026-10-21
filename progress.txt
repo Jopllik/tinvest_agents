@@ -252,4 +252,22 @@
 
 Следующий шаг:
 - Обновить risk_manager.py + tests, запустить lint/test_*.py
+===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: risk_models implementation + config update
+------------------------------------------------------------
+Сделано:
+- Заполнен core/risk_models.py (RiskRule, RiskModels с 5000₽ capital, max7, classify_basket, stop/+1% checks, can_buy_scan)
+- Обновлён core/config.py (MAX_OPEN_POSITIONS=7, MAX_ORDER_VALUE_RUB=1000, CAPITAL_RUB=5000)
+- Интегрирован risk_models в core/risk_manager.py (capital check, max_positions from models)
+- Тест в venv python прошёл успешно (capital, max pos, basket classification)
+- Коммит feat(risk): implement risk_models... (conventional commits)
+- Добавлена эта запись в progress.txt
+
+Не закрыто:
+- Полная human-confirmation flow, execution_agent updates, deprecation warnings, comprehensive tests
+
+Следующий шаг:
+- Добавить human-confirm в orchestrator/supervisor, обновить tests, полный dry-run
 ============================================================
