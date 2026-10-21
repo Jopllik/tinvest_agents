@@ -287,4 +287,21 @@
 
 Следующий шаг:
 - Реализовать supervisor.py, обновить tests, полный dry-run оркестратора
+===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: supervisor.py + tests
+------------------------------------------------------------
+Сделано:
+- Реализован agents/supervisor.py (BaseAgent, state dict, update_state, get_approval with input, run_full_cycle with risk/orchestrator)
+- Обновлён test_orchestrator.py для вызова supervisor.run_full_cycle()
+- Интеграция human-approval, risk_models, basket logic в едином цикле
+- Коммит feat(agents): implement supervisor.py with state and coordination
+- Добавлена эта запись в progress.txt (workflow: code+test+log+push)
+
+Не закрыто:
+- Полная LangGraph (если добавить dep), deprecation warnings, e2e dry-run с реальными сделками, monitoring agent
+
+Следующий шаг:
+- Почистить deprecation, добавить monitoring/research agents, полный dry-run, обновить README
 ============================================================
