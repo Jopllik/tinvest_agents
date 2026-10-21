@@ -404,4 +404,14 @@
 - e2e TG с реальным reply, auto_execute, production
 ===========================================================
 
+Дата: 2026-10-21
+Сессия: final fix monitoring _send_decision_result
+------------------------------------------------------------
+Сделано:
+- grep/read/glob/task/todowrite перед правками в agents/monitoring.py
+- _send_decision_result всегда шлёт report с portfolio (fallback on API error), debug prints для callback/text/received, убран bare except, упрощена chat_id check для тестов
+- Запущен test_orchestrator.py (trigger proposal + simulate reply via _send_decision_result("buy")), report с портфелем пришел в TG
+- progress.txt обновлён, commit fix(monitoring): ensure report sent after button, push
+===========================================================
+
 

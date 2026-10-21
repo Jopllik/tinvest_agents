@@ -28,7 +28,7 @@ class MonitoringAgent(BaseAgent):
             if call.message and hasattr(call.message, 'chat'):
                 chat_id = call.message.chat.id
             print(f"[{self.name}] DEBUG: callback triggered data={call.data} chat={chat_id}")
-            if call.message and hasattr(call.message, 'chat') and str(call.message.chat.id) != str(self.chat_id):
+            if self.chat_id and str(chat_id) != str(self.chat_id):
                 self.bot.answer_callback_query(call.id)
                 print(f"[{self.name}] DEBUG: chat id mismatch")
                 return
@@ -47,7 +47,7 @@ class MonitoringAgent(BaseAgent):
             if hasattr(message, 'chat') and hasattr(message.chat, 'id'):
                 chat_id = message.chat.id
             print(f"[{self.name}] DEBUG: message received text='{message.text}' chat={chat_id}")
-            if hasattr(message, 'chat') and str(message.chat.id) != str(self.chat_id):
+            if self.chat_id and str(chat_id) != str(self.chat_id):
                 print(f"[{self.name}] DEBUG: chat id mismatch in message")
                 return
             if any(k in text for k in ['buy', '✅', 'да', 'yes']):
@@ -72,28 +72,27 @@ class MonitoringAgent(BaseAgent):
                     msg = f"✅ {name}: {result.message}"
                     try:
                         self.bot.send_message(self.chat_id, msg)
-                    except:
-                        pass
+                    except Exception as e:
+                        print(f"[{self.name}] TG exec msg error: {e}")
                     print(msg)
         self.pending_proposals = []
 
     def _send_decision_result(self, decision: str):
-        portfolio = self.get_portfolio()
-        print(f"\n=== Портфель после {decision.upper()} ===")
-        print(f"Общая стоимость: {portfolio.total_value:,.2f} ₽")
-        print(f"Свободные деньги: {portfolio.free_cash:,.2f} ₽")
-        print(f"Позиций: {len(portfolio.positions)} / {risk_manager.max_open_positions}")
-        if not portfolio.positions:
-            print("Открытых позиций нет.")
-        else:
-            print("Позиции:")
-            for pos in portfolio.positions:
-                side = "ЛОНГ" if pos.quantity > 0 else "ШОРТ"
-                print(f"  {pos.ticker:6} {pos.name or '':20} {pos.quantity:6} {side} {pos.value:10,.2f} ₽")
+        print(f"[{self.name}] DEBUG: _send_decision_result called with {decision}, ensuring report sent")
+        try:
+            portfolio = self.get_portfolio()
+        except Exception as e:
+            print(f"[{self.name}] Portfolio API error in report: {e}. Using fallback.")
+            portfolio = type('obj', (object,), {'total_value': 0, 'free_cash': 0, 'positions': []})()
+        pos_count = len(getattr(portfolio, 'positions', []))
+        bal = f"{getattr(portfolio, 'free_cash', 0):,.0f}"
         if not self.bot or not self.chat_id:
+            print(f"\n=== Портфель после {decision.upper()} ===")
+            print(f"Общая стоимость: {getattr(portfolio, 'total_value', 0):,.2f} ₽")
+            print(f"Свободные деньги: {getattr(portfolio, 'free_cash', 0):,.2f} ₽")
+            print(f"Позиций: {pos_count} / {risk_manager.max_open_positions}")
+            if pos_count == 0: print("Открытых позиций нет.")
             return
-        bal = f"{portfolio.free_cash:,.0f}"
-        pos_count = len(portfolio.positions)
         if decision == "buy":
             result_msg = f"✅ ордера выставлены, баланс {bal}₽, позиции {pos_count}. Следующий цикл автоматически."
             print(f"[{self.name}] DEBUG: buy report sent with bal={bal} pos={pos_count}")
@@ -102,8 +101,19 @@ class MonitoringAgent(BaseAgent):
             print(f"[{self.name}] DEBUG: no report sent with bal={bal} pos={pos_count}")
         try:
             self.bot.send_message(self.chat_id, result_msg)
-        except:
-            pass
+            print(f"[{self.name}] Report message sent to TG with portfolio")
+        except Exception as e:
+            print(f"[{self.name}] TG send error: {e}")
+        try:
+            print(f"\n=== Портфель после {decision.upper()} ===")
+            print(f"Общая стоимость: {getattr(portfolio, 'total_value', 0):,.2f} ₽")
+            print(f"Свободные деньги: {getattr(portfolio, 'free_cash', 0):,.2f} ₽")
+            print(f"Позиций: {pos_count} / {risk_manager.max_open_positions}")
+            if pos_count == 0:
+                print("Открытых позиций нет.")
+        except Exception as e:
+            print(f"[{self.name}] Console report print error: {e}")
+
 
     def send_buy_proposals(self, proposals: list):
         """Отправляет 3 предложения из корзин (ticker, lot_cost, gap%) в Telegram с кнопками buy/no."""
