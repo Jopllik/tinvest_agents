@@ -390,4 +390,18 @@
 - progress.txt обновлён, коммит fix(monitoring): ensure callback responds with portfolio report, push
 ===========================================================
 
+Дата: 2026-10-21
+Сессия: fix text reply + ReplyKeyboard in monitoring.py
+------------------------------------------------------------
+Сделано:
+- Использованы grep/read/glob перед всеми правками (monitoring, supervisor, test, progress, rules.txt)
+- Добавлен @message_handler для text 'buy'/'no' или кнопок, debug prints, switched to ReplyKeyboardMarkup (если inline не работает)
+- Human reply (text/button) теперь триггерит _send_decision_result с portfolio report: buy="ордера выставлены, баланс X, позиции Y", no="покупки отклонены, состояние портфеля, следующий цикл"
+- Сохранён стиль кода (print DEBUG, f-strings, no comments, try/except), todowrite/task pattern
+- test_orchestrator.py запущен: полный цикл, proposals+ReplyKeyboard, handlers, TG response verified
+- progress.txt обновлён, commit fix(monitoring): make reply trigger portfolio report, push
+Следующий шаг:
+- e2e TG с реальным reply, auto_execute, production
+===========================================================
+
 

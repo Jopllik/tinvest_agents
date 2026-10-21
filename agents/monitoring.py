@@ -40,6 +40,23 @@ class MonitoringAgent(BaseAgent):
                 self.pending_proposals = []
                 self._send_decision_result("no")
             print(f"[{self.name}] DEBUG: callback handled")
+        @self.bot.message_handler(content_types=['text'])
+        def handle_message(message):
+            text = message.text.lower() if message.text else ''
+            chat_id = 'N/A'
+            if hasattr(message, 'chat') and hasattr(message.chat, 'id'):
+                chat_id = message.chat.id
+            print(f"[{self.name}] DEBUG: message received text='{message.text}' chat={chat_id}")
+            if hasattr(message, 'chat') and str(message.chat.id) != str(self.chat_id):
+                print(f"[{self.name}] DEBUG: chat id mismatch in message")
+                return
+            if any(k in text for k in ['buy', '✅', 'да', 'yes']):
+                self._process_buy_approval()
+                self._send_decision_result("buy")
+            elif any(k in text for k in ['no', 'нет', '❌']):
+                self.pending_proposals = []
+                self._send_decision_result("no")
+            print(f"[{self.name}] DEBUG: text message handled")
         print(f"[{self.name}] Telegram handlers registered")
 
     def _process_buy_approval(self):
@@ -100,14 +117,14 @@ class MonitoringAgent(BaseAgent):
                 signal, name, lot_cost, gap_percent = p[0], p[1], p[2], p[3]
                 text += f"{i}. {name}\n   Лот: {lot_cost:.0f}₽ | Gap: {gap_percent:.2f}%\n"
         text += "\nПодтвердить покупку всех 3?"
-        markup = types.InlineKeyboardMarkup(row_width=2)
+        markup = types.ReplyKeyboardMarkup(row_width=2, one_time_keyboard=True, resize_keyboard=True)
         markup.add(
-            types.InlineKeyboardButton("✅ BUY", callback_data="buy"),
-            types.InlineKeyboardButton("❌ NO", callback_data="no")
+            types.KeyboardButton("✅ BUY"),
+            types.KeyboardButton("❌ NO")
         )
         try:
             self.bot.send_message(int(self.chat_id), text, reply_markup=markup)
-            print(f"[{self.name}] Предложения отправлены в Telegram. Ожидаем подтверждения.")
+            print(f"[{self.name}] Предложения отправлены в Telegram с ReplyKeyboard. Ожидаем подтверждения.")
             return True
         except Exception as e:
             print(f"[{self.name}] Ошибка отправки в TG: {e}")
