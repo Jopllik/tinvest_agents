@@ -184,8 +184,14 @@ class Orchestrator:
                 print("\nПредлагаем max 3 бумаги (по корзинам/strongest):")
                 for s in selected[:3]:
                     print(f"  {s[1]} ({s[2]:.0f}₽ gap={s[3]:.3f}%)")
-                print("Подтвердите покупку этих 3 бумаг?")
-                print("[STUB] Human confirmation - auto buy disabled per rules")
+                print("Подтвердите покупку этих 3 бумаг? (y/n)")
+                if input().lower() == 'y':
+                    print("Human confirmed — executing buys (if auto_execute=True)")
+                    for s in selected[:3]:
+                        exec_result = execution_agent.execute(s[0])
+                        print(f"  {s[1]}: {exec_result.message}")
+                else:
+                    print("Human rejected — buys skipped per rules.txt")
             else:
                 print(f"Годных <3 ({len(selected)}), предложение не отправляется.")
 
