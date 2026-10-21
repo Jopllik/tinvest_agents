@@ -307,6 +307,24 @@
 ===========================================================
 ===========================================================
 Дата: 2026-10-21
+Сессия: Research & News Agent with RSS
+------------------------------------------------------------
+Сделано:
+- tools/news_tools.py: fetch_rss_feed (urllib + XML for Interfax), analyze_sentiment, get_news_for_tickers
+- agents/research_news.py: использует tool, анализирует новости по тикерам, sentiment, recommendation
+- Интеграция в supervisor.run_full_cycle() перед orchestrator (news first)
+- test_orchestrator обновлён, dry-run прошёл (RSS mock на ошибках)
+- Коммит feat(agents): add RSS news monitoring to ResearchNewsAgent
+- Добавлена эта запись в progress.txt
+
+Не закрыто:
+- Telegram bot для уведомлений/подтверждений, monitoring agent, production с 5000₽, e2e tests
+
+Следующий шаг:
+- Telegram bot для human-confirm (уведомления + reply), monitoring agent, production prep
+===========================================================
+===========================================================
+Дата: 2026-10-21
 Сессия: fix deprecation + agents + dry-run + README
 ------------------------------------------------------------
 Сделано:

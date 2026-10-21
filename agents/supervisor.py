@@ -2,6 +2,7 @@ from core.orchestrator import orchestrator
 from core.risk_manager import risk_manager
 from core.risk_models import risk_models
 from agents.base_agent import BaseAgent
+from agents.research_news import ResearchNewsAgent
 
 
 class Supervisor(BaseAgent):
@@ -38,7 +39,9 @@ class Supervisor(BaseAgent):
         return approved
 
     def run_full_cycle(self):
-        """Полный цикл: update state -> risk check -> orchestrator -> final decision."""
+        """Полный цикл: news research -> update state -> risk check -> orchestrator -> final decision."""
+        news_agent = ResearchNewsAgent("ResearchNews")
+        news_agent.run()
         self.update_state()
         print(f"[{self.name}] Цикл {self.state['cycle_count'] + 1}. Позиций: {self.state['positions_count']}")
 
