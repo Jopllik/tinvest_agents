@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from uuid import uuid4
 
-from t_tech.invest import OrderDirection, OrderType, SecurityTradingStatus
+from t_tech.invest import OrderDirection, OrderType, SecurityTradingStatus, InstrumentIdType
 from t_tech.invest.schemas import PostOrderResponse
 from core.client import invest_client
 from core.risk_manager import risk_manager
@@ -66,7 +66,7 @@ def place_market_order(
     try:
         with invest_client.get_client() as client:
             # --- Проверка торгового статуса ---
-            status_response = client.market_data.get_trading_status(figi=figi)
+            status_response = client.market_data.get_trading_status(instrument_id=figi)
 
             trading_status = status_response.trading_status
             market_available = status_response.market_order_available_flag
@@ -88,7 +88,7 @@ def place_market_order(
 
             # --- Выставляем ордер ---
             response: PostOrderResponse = client.orders.post_order(
-                figi=figi,
+                instrument_id=figi,
                 quantity=quantity,
                 direction=order_direction,
                 account_id=invest_client.get_account_id(),

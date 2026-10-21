@@ -1,6 +1,6 @@
 import time
 from uuid import uuid4
-from t_tech.invest import OrderDirection, OrderType, SecurityTradingStatus
+from t_tech.invest import OrderDirection, OrderType, SecurityTradingStatus, InstrumentIdType
 
 from core.client import invest_client
 from core.portfolio import get_portfolio
@@ -24,7 +24,7 @@ with invest_client.get_client() as client:
             figi = pos.figi
             shares = abs(int(pos.quantity))
 
-            status = client.market_data.get_trading_status(figi=figi)
+            status = client.market_data.get_trading_status(instrument_id=figi)
             status_name = SecurityTradingStatus(status.trading_status).name
 
             if not quotation_ok(status):
@@ -32,9 +32,11 @@ with invest_client.get_client() as client:
                 print("  Запусти скрипт после 10:00 МСК\n")
                 continue
 
-            share = client.instruments.share_by(
-                id_type=1, class_code="", id=figi
-            ).instrument
+            instrument_resp = client.instruments.get_instrument_by(
+                id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_FIGI,
+                id=figi
+            )
+            share = instrument_resp.instrument
             lot = share.lot or 1
             lots = max(1, shares // lot)
 
@@ -42,7 +44,7 @@ with invest_client.get_client() as client:
 
             try:
                 response = client.orders.post_order(
-                    figi=figi,
+                    instrument_id=figi,
                     quantity=lots,
                     direction=OrderDirection.ORDER_DIRECTION_BUY,
                     account_id=account_id,

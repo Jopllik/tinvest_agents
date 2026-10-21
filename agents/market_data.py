@@ -17,6 +17,17 @@ class MarketDataAgent(BaseAgent):
         ticker = ticker.upper().strip()
 
         with invest_client.get_client() as client:
+            try:
+                instrument_resp = client.instruments.get_instrument_by(
+                    id_type=InstrumentIdType.INSTRUMENT_ID_TYPE_TICKER,
+                    id=ticker
+                )
+                instrument = instrument_resp.instrument
+                if instrument.class_code == "TQBR":
+                    return instrument
+            except Exception:
+                pass
+            # Fallback to full list
             shares = client.instruments.shares().instruments
             for share in shares:
                 if share.ticker == ticker and share.class_code == "TQBR":
@@ -32,7 +43,7 @@ class MarketDataAgent(BaseAgent):
 
     def get_trading_status(self, figi: str) -> str:
         with invest_client.get_client() as client:
-            status = client.market_data.get_trading_status(figi=figi)
+            status = client.market_data.get_trading_status(instrument_id=figi)
             return str(status.trading_status)
 
     def show_ticker(self, ticker: str):
