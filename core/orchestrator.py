@@ -85,6 +85,7 @@ class Orchestrator:
             return
 
         print("-" * 60)
+        buy_signals = []
         signals_found = 0
         for figi, name, approx_price in self.instruments:
             print(f"\n→ Анализируем {name} ({figi})")
@@ -103,23 +104,93 @@ class Orchestrator:
 
                 if result.signal:
                     signals_found += 1
-                    print(f"  Есть сигнал → передаём в ExecutionAgent")
-                    exec_result = execution_agent.execute(result.signal)
-
-                    if exec_result.skipped:
-                        print(f"  Пропущено: {exec_result.message}")
-                    elif exec_result.success:
-                        print(f"  Ордер исполнен: {exec_result.order_id}")
-                    else:
-                        print(f"  Ошибка исполнения: {exec_result.message}")
+                    if result.signal.action == "buy":
+                        if any(p.figi == figi for p in portfolio.positions):
+                            print("  Уже в портфеле — skip")
+                            continue
+                        lot_cost = getattr(result.signal, 'order_value_rub', approx_price)
+                        if lot_cost > portfolio.free_cash or lot_cost > 1000 or lot_cost < 0.01:
+                            print(f"  Lot {lot_cost:.0f}₽ — недостаточно средств или вне лимита")
+                            continue
+                        gap_percent = 0.0
+                        gap_rub = 0.0
+                        if result.sma_slow and result.sma_slow > 0:
+                            gap_percent = (result.sma_fast - result.sma_slow) / result.sma_slow * 100
+                            gap_rub = result.sma_fast - result.sma_slow
+                        buy_signals.append((result.signal, name, lot_cost, gap_percent, gap_rub, result))
+                        print(f"  BUY сигнал собран (gap {gap_percent:.3f}%)")
+                    else:  # sell
+                        profit_ok = False
+                        for pos in portfolio.positions:
+                            if pos.figi == figi:
+                                profit = (pos.current_price - pos.average_price) / pos.average_price
+                                if profit >= 0.01:
+                                    profit_ok = True
+                                    print(f"  +{profit:.1%} profit — SMA-sell OK")
+                                else:
+                                    print(f"  SMA-sell blocked: profit {profit:.1%} < +1%")
+                                break
+                        if profit_ok:
+                            print(f"  Есть сигнал SELL → передаём в ExecutionAgent")
+                            exec_result = execution_agent.execute(result.signal)
+                            if exec_result.skipped:
+                                print(f"  Пропущено: {exec_result.message}")
+                            elif exec_result.success:
+                                print(f"  Ордер исполнен: {exec_result.order_id}")
+                            else:
+                                print(f"  Ошибка исполнения: {exec_result.message}")
+                        else:
+                            print("  ○ SMA-sell отклонен (нет +1%)")
                 else:
                     print(f"  ○ Сигнала нет")
 
             except Exception as e:
                 print(f"  ⚠ Ошибка при анализе {name}: {e}")
 
+        # Basket logic per rules.txt: CHE(0-100), AVE(100-500), EXP(500-1000)
+        if buy_signals:
+            baskets = {"CHE": [], "AVE": [], "EXP": []}
+            for sig_tuple in buy_signals:
+                _, _, lot_cost, _, _, _ = sig_tuple
+                if lot_cost < 100:
+                    b = "CHE"
+                elif lot_cost < 500:
+                    b = "AVE"
+                else:
+                    b = "EXP"
+                baskets[b].append(sig_tuple)
+            print(f"\nКорзины: CHE={len(baskets.get('CHE',[]))}, AVE={len(baskets.get('AVE',[]))}, EXP={len(baskets.get('EXP',[]))}")
+
+            selected = []
+            for bname in ["CHE", "AVE", "EXP"]:
+                bs = baskets.get(bname, [])
+                if bs:
+                    sorted_b = sorted(bs, key=lambda x: (-x[3], -x[4]))
+                    strongest = sorted_b[0]
+                    selected.append(strongest)
+                    print(f"Strongest {bname}: {strongest[1]} gap={strongest[3]:.3f}%")
+
+            if len(selected) < 3 and len(buy_signals) >= 3:
+                used_figis = {s[0].figi for s in selected}
+                remaining = [s for s in buy_signals if s[0].figi not in used_figis]
+                if remaining:
+                    sorted_rem = sorted(remaining, key=lambda x: (-x[3], -x[4]))
+                    for s in sorted_rem:
+                        if len(selected) < 3:
+                            selected.append(s)
+                            print(f"Дополняем strongest overall: {s[1]}")
+
+            if len(selected) >= 3:
+                print("\nПредлагаем max 3 бумаги (по корзинам/strongest):")
+                for s in selected[:3]:
+                    print(f"  {s[1]} ({s[2]:.0f}₽ gap={s[3]:.3f}%)")
+                print("Подтвердите покупку этих 3 бумаг?")
+                print("[STUB] Human confirmation - auto buy disabled per rules")
+            else:
+                print(f"Годных <3 ({len(selected)}), предложение не отправляется.")
+
         print("\n" + "=" * 60)
-        print(f"[{self.name}] Цикл завершён | Найдено сигналов: {signals_found}")
+        print(f"[{self.name}] Цикл завершён | Buy-сигналов: {len(buy_signals)}")
         print("=" * 60)
 
     def run_loop(self, interval_minutes: int = 15):
