@@ -350,4 +350,19 @@
 Следующий шаг:
 - production prep, e2e tests с реальным TG confirmation, set auto_execute=True после верификации
 ===========================================================
+===========================================================
+Дата: 2026-10-21
+Сессия: fix callback for buy/no buttons in monitoring
+------------------------------------------------------------
+Сделано:
+- Использованы read/grep перед всеми правками (monitoring.py, portfolio, supervisor, tests, progress)
+- Исправлен callback в handle_callback + добавлен _send_decision_result: для BUY — "ордера выставлены, баланс, позиции"; для NO — "покупки отклонены, состояние портфеля, следующий цикл"
+- Portfolio print после каждого решения (моделирует run(), использует risk_manager.max_open_positions)
+- Сохранён стиль: f-strings, print с русским, try/except для bot, no new comments
+- Запущен test_orchestrator.py: уведомления приходят, handlers registered, mock proposals, кнопки setup работает (callback_query_handler активен)
+- Обновлён progress.txt, коммит fix(monitoring): fix callback and add portfolio response after buy/no, push
+Следующий шаг:
+- e2e TG tests, production, auto_execute=True после верификации
+===========================================================
+
 

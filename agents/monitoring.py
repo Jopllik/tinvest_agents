@@ -29,10 +29,11 @@ class MonitoringAgent(BaseAgent):
             if call.data == "buy":
                 self.bot.answer_callback_query(call.id, "✅ Подтверждено")
                 self._process_buy_approval()
+                self._send_decision_result("buy")
             elif call.data == "no":
                 self.bot.answer_callback_query(call.id, "❌ Отклонено")
-                self.bot.send_message(self.chat_id, "Покупки отклонены (rules.txt)")
                 self.pending_proposals = []
+                self._send_decision_result("no")
         print(f"[{self.name}] Telegram handlers registered")
 
     def _process_buy_approval(self):
@@ -52,6 +53,30 @@ class MonitoringAgent(BaseAgent):
                         pass
                     print(msg)
         self.pending_proposals = []
+
+    def _send_decision_result(self, decision: str):
+        portfolio = self.get_portfolio()
+        print(f"\n=== Портфель после {decision.upper()} ===")
+        print(f"Общая стоимость: {portfolio.total_value:,.2f} ₽")
+        print(f"Свободные деньги: {portfolio.free_cash:,.2f} ₽")
+        print(f"Позиций: {len(portfolio.positions)} / {risk_manager.max_open_positions}")
+        if not portfolio.positions:
+            print("Открытых позиций нет.")
+        else:
+            print("Позиции:")
+            for pos in portfolio.positions:
+                side = "ЛОНГ" if pos.quantity > 0 else "ШОРТ"
+                print(f"  {pos.ticker:6} {pos.name or '':20} {pos.quantity:6} {side} {pos.value:10,.2f} ₽")
+        if not self.bot or not self.chat_id:
+            return
+        if decision == "buy":
+            result_msg = "✅ Ордера выставлены. Баланс и позиции обновлены. Следующий цикл начнётся автоматически."
+        else:
+            result_msg = "❌ Покупки отклонены (rules.txt). Состояние портфеля выше. Следующий цикл через 1 час."
+        try:
+            self.bot.send_message(self.chat_id, result_msg)
+        except:
+            pass
 
     def send_buy_proposals(self, proposals: list):
         """Отправляет 3 предложения из корзин (ticker, lot_cost, gap%) в Telegram с кнопками buy/no."""
@@ -99,3 +124,7 @@ class MonitoringAgent(BaseAgent):
             self._bot_thread.start()
             time.sleep(2)
         print("\n=== Агент завершил работу ===")
+
+
+monitoring_agent = MonitoringAgent()
+print(f"[{monitoring_agent.name}] Global instance created with TG bot.")
