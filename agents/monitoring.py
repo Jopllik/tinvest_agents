@@ -16,6 +16,7 @@ class MonitoringAgent(BaseAgent):
         self.chat_id = settings.TELEGRAM_CHAT_ID
         self.pending_proposals = []
         self._bot_thread = None
+        self.stop_event = threading.Event()
         if settings.TELEGRAM_BOT_TOKEN and self.chat_id:
             self.bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
             self._register_handlers()
@@ -57,6 +58,16 @@ class MonitoringAgent(BaseAgent):
                 self.pending_proposals = []
                 self._send_decision_result("no")
             print(f"[{self.name}] DEBUG: text message handled")
+
+        @self.bot.message_handler(commands=['stop'])
+        def handle_stop(message):
+            chat_id = message.chat.id if hasattr(message, 'chat') else 'N/A'
+            if self.chat_id and str(chat_id) != str(self.chat_id):
+                return
+            self.bot.send_message(self.chat_id, "🛑 Бот и система остановлены удалённо.")
+            self.stop_event.set()
+            self.bot.stop_polling()
+            print(f"[{self.name}] Stop command from TG. Shutting down polling.")
         print(f"[{self.name}] Telegram handlers registered")
 
     def _process_buy_approval(self):
@@ -142,6 +153,9 @@ class MonitoringAgent(BaseAgent):
 
     def run(self):
         print(f"\n=== {self.name} запущен ===\n")
+        if self.stop_event.is_set():
+            print(f"[{self.name}] Stop event is set. Skipping run.")
+            return
         portfolio = self.get_portfolio()
         print(f"Общая стоимость: {portfolio.total_value:,.2f} ₽")
         print(f"Свободные деньги: {portfolio.free_cash:,.2f} ₽")
