@@ -1,3 +1,21 @@
+п»ї============================================================
+Р”Р°С‚Р°: 2026-10-21
+РЎРµСЃСЃРёСЏ: Research & News Agent with RSS
+------------------------------------------------------------
+РЎРґРµР»Р°РЅРѕ:
+- tools/news_tools.py: fetch_rss_feed (urllib + XML for Interfax), analyze_sentiment, get_news_for_tickers
+- agents/research_news.py: РёСЃРїРѕР»СЊР·СѓРµС‚ tool, Р°РЅР°Р»РёР·РёСЂСѓРµС‚ РЅРѕРІРѕСЃС‚Рё РїРѕ С‚РёРєРµСЂР°Рј, sentiment, recommendation
+- РРЅС‚РµРіСЂР°С†РёСЏ РІ supervisor.run_full_cycle() РїРµСЂРµРґ orchestrator (news first)
+- test_orchestrator РѕР±РЅРѕРІР»С‘РЅ, dry-run РїСЂРѕС€С‘Р» (RSS mock РЅР° РѕС€РёР±РєР°С…)
+- РљРѕРјРјРёС‚ feat(agents): add RSS news monitoring to ResearchNewsAgent
+- Р”РѕР±Р°РІР»РµРЅР° СЌС‚Р° Р·Р°РїРёСЃСЊ РІ progress.txt
+
+РќРµ Р·Р°РєСЂС‹С‚Рѕ:
+- Telegram bot РґР»СЏ СѓРІРµРґРѕРјР»РµРЅРёР№/РїРѕРґС‚РІРµСЂР¶РґРµРЅРёР№, monitoring agent, production СЃ 5000в‚Ѕ, e2e tests
+
+РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
+- Telegram bot РґР»СЏ СѓРІРµРґРѕРјР»РµРЅРёР№/РїРѕРґС‚РІРµСЂР¶РґРµРЅРёР№, monitoring agent, production prep
+============================================================
 ============================================================
 Р”Р°С‚Р°: 2026-10-21
 РЎРµСЃСЃРёСЏ: sell check for owned positions + name format
@@ -135,21 +153,21 @@
 - РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ .exe, РїРµСЂРµС…РѕРґ Рє Р°РІС‚РѕРЅРѕРјРЅРѕРјСѓ СЂРµР¶РёРјСѓ РЅР° VPS
 ============================================================
 ============================================================
-Дата: 2026-10-27
-Сессия: startup human confirmation with Enter/Esc in main.py, console fixes, repo analysis
+Р”Р°С‚Р°: 2026-10-27
+РЎРµСЃСЃРёСЏ: startup human confirmation with Enter/Esc in main.py, console fixes, repo analysis
 ------------------------------------------------------------
-Сделано:
-- Обновлён main.py с большим приветствием по центру, подтверждением Enter (да) / Esc (нет) без ввода
-- run.bat с chcp 65001 для UTF-8, без лишнего pause
-- Пересобраны exe с hidden-import/add-data для certs, pause в main
-- Проанализированы все файлы и git (rules, architecture, AGENTS, taps, ls-files), вывод: проект целостный 90%, лишнее __pycache__/bool/old tests
-- Пуш main.py, run.bat, .gitignore (commits 3d66f89+)
-- Исправлены encoding/mojibake в bat, console не пропадает
+РЎРґРµР»Р°РЅРѕ:
+- РћР±РЅРѕРІР»С‘РЅ main.py СЃ Р±РѕР»СЊС€РёРј РїСЂРёРІРµС‚СЃС‚РІРёРµРј РїРѕ С†РµРЅС‚СЂСѓ, РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµРј Enter (РґР°) / Esc (РЅРµС‚) Р±РµР· РІРІРѕРґР°
+- run.bat СЃ chcp 65001 РґР»СЏ UTF-8, Р±РµР· Р»РёС€РЅРµРіРѕ pause
+- РџРµСЂРµСЃРѕР±СЂР°РЅС‹ exe СЃ hidden-import/add-data РґР»СЏ certs, pause РІ main
+- РџСЂРѕР°РЅР°Р»РёР·РёСЂРѕРІР°РЅС‹ РІСЃРµ С„Р°Р№Р»С‹ Рё git (rules, architecture, AGENTS, taps, ls-files), РІС‹РІРѕРґ: РїСЂРѕРµРєС‚ С†РµР»РѕСЃС‚РЅС‹Р№ 90%, Р»РёС€РЅРµРµ __pycache__/bool/old tests
+- РџСѓС€ main.py, run.bat, .gitignore (commits 3d66f89+)
+- РСЃРїСЂР°РІР»РµРЅС‹ encoding/mojibake РІ bat, console РЅРµ РїСЂРѕРїР°РґР°РµС‚
 
-Не закрыто:
-- Полная graceful shutdown оркестратора
-- VPS с расписанием, holidays, service, full e2e with real token, auto_execute=True
+РќРµ Р·Р°РєСЂС‹С‚Рѕ:
+- РџРѕР»РЅР°СЏ graceful shutdown РѕСЂРєРµСЃС‚СЂР°С‚РѕСЂР°
+- VPS СЃ СЂР°СЃРїРёСЃР°РЅРёРµРј, holidays, service, full e2e with real token, auto_execute=True
 
-Следующий шаг:
-- Тестирование .exe с real token, deploy на VPS, обновление README
+РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
+- РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ .exe СЃ real token, deploy РЅР° VPS, РѕР±РЅРѕРІР»РµРЅРёРµ README
 ============================================================
