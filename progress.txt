@@ -1,173 +1,181 @@
-п»ї============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: Research & News Agent with RSS
+============================================================
+Дата: 2026-10-21
+Сессия: sell check for owned positions + name format
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- tools/news_tools.py: fetch_rss_feed (urllib + XML for Interfax), analyze_sentiment, get_news_for_tickers
-- agents/research_news.py: РёСЃРїРѕР»СЊР·СѓРµС‚ tool, Р°РЅР°Р»РёР·РёСЂСѓРµС‚ РЅРѕРІРѕСЃС‚Рё РїРѕ С‚РёРєРµСЂР°Рј, sentiment, recommendation
-- РРЅС‚РµРіСЂР°С†РёСЏ РІ supervisor.run_full_cycle() РїРµСЂРµРґ orchestrator (news first)
-- test_orchestrator РѕР±РЅРѕРІР»С‘РЅ, dry-run РїСЂРѕС€С‘Р» (RSS mock РЅР° РѕС€РёР±РєР°С…)
-- РљРѕРјРјРёС‚ feat(agents): add RSS news monitoring to ResearchNewsAgent
-- Р”РѕР±Р°РІР»РµРЅР° СЌС‚Р° Р·Р°РїРёСЃСЊ РІ progress.txt
+Сделано:
+- В analysis_agent.py добавлен check позиции перед генерацией sell-сигнала (только для owned LONG per rules.txt "компании в портфеле")
+- В orchestrator.py print теперь "ticker Полное название" (CBOM Московский Кредитный Банк)
+- Восстановлен оригинальный SMA gap filter (0.15%) после тестов
+- Все изменения закоммичены, progress обновлён, запушено
+- Тестовый прогон с human-confirm работает
 
-РќРµ Р·Р°РєСЂС‹С‚Рѕ:
-- Telegram bot РґР»СЏ СѓРІРµРґРѕРјР»РµРЅРёР№/РїРѕРґС‚РІРµСЂР¶РґРµРЅРёР№, monitoring agent, production СЃ 5000в‚Ѕ, e2e tests
+Не закрыто:
+- Полный production с 5000?, e2e tests, auto_execute=True (после TG тестов)
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- Telegram bot РґР»СЏ СѓРІРµРґРѕРјР»РµРЅРёР№/РїРѕРґС‚РІРµСЂР¶РґРµРЅРёР№, monitoring agent, production prep
+Сделано (Telegram bot):
+- agents/monitoring.py: MonitoringAgent расширен TelegramBot (pyTelegramBotAPI, token+chat_id из settings, send_buy_proposals с 3 предложениями ticker/lot_cost/gap%, InlineKeyboard buy/no)
+- При 'buy' callback: _process_buy_approval -> execution_agent.execute(TradeSignal) для каждой
+- Интеграция: orchestrator.run_once() теперь возвращает proposals (>=3 из корзин), supervisor.run_full_cycle() вызывает get_approval -> Monitoring.send_buy_proposals если proposals
+- supervisor.get_approval обновлён для TG, bot polling в daemon thread
+- Сохранён стиль (print, BaseAgent), fallback на console если нет TOKEN/CHAT_ID
+- requirements уже имел pyTelegramBotAPI, тесты импорта прошли
+- Коммит feat(monitoring): add Telegram bot for buy confirmation
+- progress.txt обновлён, push выполнен
+
+Следующий шаг:
+- production prep, e2e tests с реальным TG confirmation, set auto_execute=True после верификации
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: sell check for owned positions + name format
+Дата: 2026-10-21
+Сессия: fix callback for buy/no buttons in monitoring
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- Р’ analysis_agent.py РґРѕР±Р°РІР»РµРЅ check РїРѕР·РёС†РёРё РїРµСЂРµРґ РіРµРЅРµСЂР°С†РёРµР№ sell-СЃРёРіРЅР°Р»Р° (С‚РѕР»СЊРєРѕ РґР»СЏ owned LONG per rules.txt "РєРѕРјРїР°РЅРёРё РІ РїРѕСЂС‚С„РµР»Рµ")
-- Р’ orchestrator.py print С‚РµРїРµСЂСЊ "ticker РџРѕР»РЅРѕРµ РЅР°Р·РІР°РЅРёРµ" (CBOM РњРѕСЃРєРѕРІСЃРєРёР№ РљСЂРµРґРёС‚РЅС‹Р№ Р‘Р°РЅРє)
-- Р’РѕСЃСЃС‚Р°РЅРѕРІР»РµРЅ РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ SMA gap filter (0.15%) РїРѕСЃР»Рµ С‚РµСЃС‚РѕРІ
-- Р’СЃРµ РёР·РјРµРЅРµРЅРёСЏ Р·Р°РєРѕРјРјРёС‡РµРЅС‹, progress РѕР±РЅРѕРІР»С‘РЅ, Р·Р°РїСѓС€РµРЅРѕ
-- РўРµСЃС‚РѕРІС‹Р№ РїСЂРѕРіРѕРЅ СЃ human-confirm СЂР°Р±РѕС‚Р°РµС‚
-
-РќРµ Р·Р°РєСЂС‹С‚Рѕ:
-- РџРѕР»РЅС‹Р№ production СЃ 5000в‚Ѕ, e2e tests, auto_execute=True (РїРѕСЃР»Рµ TG С‚РµСЃС‚РѕРІ)
-
-РЎРґРµР»Р°РЅРѕ (Telegram bot):
-- agents/monitoring.py: MonitoringAgent СЂР°СЃС€РёСЂРµРЅ TelegramBot (pyTelegramBotAPI, token+chat_id РёР· settings, send_buy_proposals СЃ 3 РїСЂРµРґР»РѕР¶РµРЅРёСЏРјРё ticker/lot_cost/gap%, InlineKeyboard buy/no)
-- РџСЂРё 'buy' callback: _process_buy_approval -> execution_agent.execute(TradeSignal) РґР»СЏ РєР°Р¶РґРѕР№
-- РРЅС‚РµРіСЂР°С†РёСЏ: orchestrator.run_once() С‚РµРїРµСЂСЊ РІРѕР·РІСЂР°С‰Р°РµС‚ proposals (>=3 РёР· РєРѕСЂР·РёРЅ), supervisor.run_full_cycle() РІС‹Р·С‹РІР°РµС‚ get_approval -> Monitoring.send_buy_proposals РµСЃР»Рё proposals
-- supervisor.get_approval РѕР±РЅРѕРІР»С‘РЅ РґР»СЏ TG, bot polling РІ daemon thread
-- РЎРѕС…СЂР°РЅС‘РЅ СЃС‚РёР»СЊ (print, BaseAgent), fallback РЅР° console РµСЃР»Рё РЅРµС‚ TOKEN/CHAT_ID
-- requirements СѓР¶Рµ РёРјРµР» pyTelegramBotAPI, С‚РµСЃС‚С‹ РёРјРїРѕСЂС‚Р° РїСЂРѕС€Р»Рё
-- РљРѕРјРјРёС‚ feat(monitoring): add Telegram bot for buy confirmation
-- progress.txt РѕР±РЅРѕРІР»С‘РЅ, push РІС‹РїРѕР»РЅРµРЅ
-
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- production prep, e2e tests СЃ СЂРµР°Р»СЊРЅС‹Рј TG confirmation, set auto_execute=True РїРѕСЃР»Рµ РІРµСЂРёС„РёРєР°С†РёРё
+Сделано:
+- Использованы read/grep перед всеми правками (monitoring.py, portfolio, supervisor, tests, progress)
+- Исправлен callback в handle_callback + добавлен _send_decision_result: для BUY — "ордера выставлены, баланс, позиции"; для NO — "покупки отклонены, состояние портфеля, следующий цикл"
+- Portfolio print после каждого решения (моделирует run(), использует risk_manager.max_open_positions)
+- Сохранён стиль: f-strings, print с русским, try/except для bot, no new comments
+- Запущен test_orchestrator.py: уведомления приходят, handlers registered, mock proposals, кнопки setup работает (callback_query_handler активен)
+- Обновлён progress.txt, коммит fix(monitoring): fix callback and add portfolio response after buy/no, push
+Следующий шаг:
+- e2e TG tests, production, auto_execute=True после верификации
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: fix callback for buy/no buttons in monitoring
+Дата: 2026-10-21
+Сессия: TG bot verification with portfolio response
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- РСЃРїРѕР»СЊР·РѕРІР°РЅС‹ read/grep РїРµСЂРµРґ РІСЃРµРјРё РїСЂР°РІРєР°РјРё (monitoring.py, portfolio, supervisor, tests, progress)
-- РСЃРїСЂР°РІР»РµРЅ callback РІ handle_callback + РґРѕР±Р°РІР»РµРЅ _send_decision_result: РґР»СЏ BUY вЂ” "РѕСЂРґРµСЂР° РІС‹СЃС‚Р°РІР»РµРЅС‹, Р±Р°Р»Р°РЅСЃ, РїРѕР·РёС†РёРё"; РґР»СЏ NO вЂ” "РїРѕРєСѓРїРєРё РѕС‚РєР»РѕРЅРµРЅС‹, СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЂС‚С„РµР»СЏ, СЃР»РµРґСѓСЋС‰РёР№ С†РёРєР»"
-- Portfolio print РїРѕСЃР»Рµ РєР°Р¶РґРѕРіРѕ СЂРµС€РµРЅРёСЏ (РјРѕРґРµР»РёСЂСѓРµС‚ run(), РёСЃРїРѕР»СЊР·СѓРµС‚ risk_manager.max_open_positions)
-- РЎРѕС…СЂР°РЅС‘РЅ СЃС‚РёР»СЊ: f-strings, print СЃ СЂСѓСЃСЃРєРёРј, try/except РґР»СЏ bot, no new comments
-- Р—Р°РїСѓС‰РµРЅ test_orchestrator.py: СѓРІРµРґРѕРјР»РµРЅРёСЏ РїСЂРёС…РѕРґСЏС‚, handlers registered, mock proposals, РєРЅРѕРїРєРё setup СЂР°Р±РѕС‚Р°РµС‚ (callback_query_handler Р°РєС‚РёРІРµРЅ)
-- РћР±РЅРѕРІР»С‘РЅ progress.txt, РєРѕРјРјРёС‚ fix(monitoring): fix callback and add portfolio response after buy/no, push
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- e2e TG tests, production, auto_execute=True РїРѕСЃР»Рµ РІРµСЂРёС„РёРєР°С†РёРё
-============================================================
-============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: TG bot verification with portfolio response
-------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
+Сделано:
 - Callback buy/no fixed in monitoring.py (handlers now respond with message)
-- РџРѕСЃР»Рµ СЂРµС€РµРЅРёСЏ (buy/no) РѕС‚РїСЂР°РІР»СЏРµС‚СЃСЏ РІС‹РІРѕРґ СЃ РїРѕСЂС‚С„РµР»РµРј (Р±Р°Р»Р°РЅСЃ, РїРѕР·РёС†РёРё, СЃР»РµРґСѓСЋС‰РёР№ С†РёРєР»)
-- Р”Р»СЏ buy: "РѕСЂРґРµСЂР° РІС‹СЃС‚Р°РІР»РµРЅС‹, Р±Р°Р»Р°РЅСЃ, РїРѕР·РёС†РёРё"; РґР»СЏ no: "РїРѕРєСѓРїРєРё РѕС‚РєР»РѕРЅРµРЅС‹, СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЂС‚С„РµР»СЏ"
-- РўРµСЃС‚ РїСЂРѕС€С‘Р», СѓРІРµРґРѕРјР»РµРЅРёСЏ Рё РєРЅРѕРїРєРё СЂР°Р±РѕС‚Р°СЋС‚, portfolio info РїСЂРёС…РѕРґРёС‚ РІ TG
-- РћР±РЅРѕРІР»С‘РЅ progress.txt, commit fix(monitoring): add portfolio response after decision, push
+- После решения (buy/no) отправляется вывод с портфелем (баланс, позиции, следующий цикл)
+- Для buy: "ордера выставлены, баланс, позиции"; для no: "покупки отклонены, состояние портфеля"
+- Тест прошёл, уведомления и кнопки работают, portfolio info приходит в TG
+- Обновлён progress.txt, commit fix(monitoring): add portfolio response after decision, push
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
+Следующий шаг:
 - e2e TG tests with real confirmation, production prep, set auto_execute=True after verification
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: final TG bot test with buy report
+Дата: 2026-10-21
+Сессия: final TG bot test with buy report
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- TG bot test cycle: proposal в†’ notification в†’ button buy в†’ report "вњ… РѕСЂРґРµСЂР° РІС‹СЃС‚Р°РІР»РµРЅС‹, Р±Р°Р»Р°РЅСЃ 100002в‚Ѕ, РїРѕР·РёС†РёРё 0. РЎР»РµРґСѓСЋС‰РёР№ С†РёРєР» Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё."
+Сделано:
+- TG bot test cycle: proposal > notification > button buy > report "? ордера выставлены, баланс 100002?, позиции 0. Следующий цикл автоматически."
 - Callback and _send_decision_result fixed to always send portfolio report even on API error (fallback values).
 - Test successful, bot works fully with report after decision.
 - All changes committed, progress updated, pushed.
 - Project complete for today.
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
+Следующий шаг:
 - Production deployment with real token, auto_execute=True after full e2e TG test.
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: fix callback in monitoring.py
+Дата: 2026-10-21
+Сессия: fix callback in monitoring.py
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- РСЃРїРѕР»СЊР·РѕРІР°РЅС‹ grep/read РїРµСЂРµРґ РїСЂР°РІРєР°РјРё monitoring.py (callback, handlers, _send_decision_result)
-- Р”РѕР±Р°РІР»РµРЅС‹ debug prints РІ handle_callback, handler С‚РµРїРµСЂСЊ РІСЃРµРіРґР° РѕС‚РІРµС‡Р°РµС‚ РЅР° callback_query
-- РћР±РЅРѕРІР»С‘РЅ _send_decision_result: report СЃ Р±Р°Р»Р°РЅСЃРѕРј, РїРѕР·РёС†РёСЏРјРё, СЃР»РµРґСѓСЋС‰РёРј С†РёРєР»РѕРј; buy: "РѕСЂРґРµСЂР° РІС‹СЃС‚Р°РІР»РµРЅС‹, Р±Р°Р»Р°РЅСЃ X, РїРѕР·РёС†РёРё Y"; no: "РїРѕРєСѓРїРєРё РѕС‚РєР»РѕРЅРµРЅС‹, СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЂС‚С„РµР»СЏ"
-- РЎРѕС…СЂР°РЅС‘РЅ СЃС‚РёР»СЊ РєРѕРґР°, task/todowrite pattern (grep+read+edit), test_orchestrator Р·Р°РїСѓС‰РµРЅ (СѓРІРµРґРѕРјР»РµРЅРёСЏ+handlers СЂР°Р±РѕС‚Р°СЋС‚)
-- progress.txt РѕР±РЅРѕРІР»С‘РЅ, РєРѕРјРјРёС‚ fix(monitoring): ensure callback responds with portfolio report, push
+Сделано:
+- Использованы grep/read перед правками monitoring.py (callback, handlers, _send_decision_result)
+- Добавлены debug prints в handle_callback, handler теперь всегда отвечает на callback_query
+- Обновлён _send_decision_result: report с балансом, позициями, следующим циклом; buy: "ордера выставлены, баланс X, позиции Y"; no: "покупки отклонены, состояние портфеля"
+- Сохранён стиль кода, task/todowrite pattern (grep+read+edit), test_orchestrator запущен (уведомления+handlers работают)
+- progress.txt обновлён, коммит fix(monitoring): ensure callback responds with portfolio report, push
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: fix text reply + ReplyKeyboard in monitoring.py
+Дата: 2026-10-21
+Сессия: fix text reply + ReplyKeyboard in monitoring.py
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- РСЃРїРѕР»СЊР·РѕРІР°РЅС‹ grep/read/glob РїРµСЂРµРґ РІСЃРµРјРё РїСЂР°РІРєР°РјРё (monitoring, supervisor, test, progress, rules.txt)
-- Р”РѕР±Р°РІР»РµРЅ @message_handler РґР»СЏ text 'buy'/'no' РёР»Рё РєРЅРѕРїРѕРє, debug prints, switched to ReplyKeyboardMarkup (РµСЃР»Рё inline РЅРµ СЂР°Р±РѕС‚Р°РµС‚)
-- Human reply (text/button) С‚РµРїРµСЂСЊ С‚СЂРёРіРіРµСЂРёС‚ _send_decision_result СЃ portfolio report: buy="РѕСЂРґРµСЂР° РІС‹СЃС‚Р°РІР»РµРЅС‹, Р±Р°Р»Р°РЅСЃ X, РїРѕР·РёС†РёРё Y", no="РїРѕРєСѓРїРєРё РѕС‚РєР»РѕРЅРµРЅС‹, СЃРѕСЃС‚РѕСЏРЅРёРµ РїРѕСЂС‚С„РµР»СЏ, СЃР»РµРґСѓСЋС‰РёР№ С†РёРєР»"
-- РЎРѕС…СЂР°РЅС‘РЅ СЃС‚РёР»СЊ РєРѕРґР° (print DEBUG, f-strings, no comments, try/except), todowrite/task pattern
-- test_orchestrator.py Р·Р°РїСѓС‰РµРЅ: РїРѕР»РЅС‹Р№ С†РёРєР», proposals+ReplyKeyboard, handlers, TG response verified
-- progress.txt РѕР±РЅРѕРІР»С‘РЅ, commit fix(monitoring): make reply trigger portfolio report, push
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- e2e TG СЃ СЂРµР°Р»СЊРЅС‹Рј reply, auto_execute, production
+Сделано:
+- Использованы grep/read/glob перед всеми правками (monitoring, supervisor, test, progress, rules.txt)
+- Добавлен @message_handler для text 'buy'/'no' или кнопок, debug prints, switched to ReplyKeyboardMarkup (если inline не работает)
+- Human reply (text/button) теперь триггерит _send_decision_result с portfolio report: buy="ордера выставлены, баланс X, позиции Y", no="покупки отклонены, состояние портфеля, следующий цикл"
+- Сохранён стиль кода (print DEBUG, f-strings, no comments, try/except), todowrite/task pattern
+- test_orchestrator.py запущен: полный цикл, proposals+ReplyKeyboard, handlers, TG response verified
+- progress.txt обновлён, commit fix(monitoring): make reply trigger portfolio report, push
+Следующий шаг:
+- e2e TG с реальным reply, auto_execute, production
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-21
-РЎРµСЃСЃРёСЏ: final fix monitoring _send_decision_result
+Дата: 2026-10-21
+Сессия: final fix monitoring _send_decision_result
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- grep/read/glob/task/todowrite РїРµСЂРµРґ РїСЂР°РІРєР°РјРё РІ agents/monitoring.py
-- _send_decision_result РІСЃРµРіРґР° С€Р»С‘С‚ report СЃ portfolio (fallback on API error), debug prints РґР»СЏ callback/text/received, СѓР±СЂР°РЅ bare except, СѓРїСЂРѕС‰РµРЅР° chat_id check РґР»СЏ С‚РµСЃС‚РѕРІ
-- Р—Р°РїСѓС‰РµРЅ test_orchestrator.py (trigger proposal + simulate reply via _send_decision_result("buy")), report СЃ РїРѕСЂС‚С„РµР»РµРј РїСЂРёС€РµР» РІ TG
-- progress.txt РѕР±РЅРѕРІР»С‘РЅ, commit fix(monitoring): ensure report sent after button, push
+Сделано:
+- grep/read/glob/task/todowrite перед правками в agents/monitoring.py
+- _send_decision_result всегда шлёт report с portfolio (fallback on API error), debug prints для callback/text/received, убран bare except, упрощена chat_id check для тестов
+- Запущен test_orchestrator.py (trigger proposal + simulate reply via _send_decision_result("buy")), report с портфелем пришел в TG
+- progress.txt обновлён, commit fix(monitoring): ensure report sent after button, push
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-23
-РЎРµСЃСЃРёСЏ: commit progress of today's session with TG bot
+Дата: 2026-10-23
+Сессия: commit progress of today's session with TG bot
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
+Сделано:
 - git status checked
 - changes to .gitignore, rules.txt, analysis_agent.py committed with fix(analysis) and chore messages
 - pushed to origin/master
 
-РќРµ Р·Р°РєСЂС‹С‚Рѕ:
+Не закрыто:
 - Further tasks for Telegram bot implementation
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
+Следующий шаг:
 - Continue with next tasks
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-26
-РЎРµСЃСЃРёСЏ: implement /stop in TG bot and build .exe for local stage
+Дата: 2026-10-26
+Сессия: implement /stop in TG bot and build .exe for local stage
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- Р”РѕР±Р°РІР»РµРЅ /stop handler РІ monitoring.py (stop_event, stop_polling, check in run())
-- РЎРѕР·РґР°РЅ main.py РґР»СЏ supervisor СЃ loop, human TG confirm Рё /stop
-- Р”РѕР±Р°РІР»РµРЅ pyinstaller, СЃРѕР±СЂР°РЅ tinvest_trader.exe РІ dist/
-- РўРµСЃС‚С‹ Рё lint РїСЂРѕС€Р»Рё, progress РѕР±РЅРѕРІР»С‘РЅ
+Сделано:
+- Добавлен /stop handler в monitoring.py (stop_event, stop_polling, check in run())
+- Создан main.py для supervisor с loop, human TG confirm и /stop
+- Добавлен pyinstaller, собран tinvest_trader.exe в dist/
+- Тесты и lint прошли, progress обновлён
 
-РќРµ Р·Р°РєСЂС‹С‚Рѕ:
-- РџРѕР»РЅР°СЏ graceful shutdown РѕСЂРєРµСЃС‚СЂР°С‚РѕСЂР°
-- VPS СЃ СЂР°СЃРїРёСЃР°РЅРёРµРј Рё РїСЂР°Р·РґРЅРёРєР°РјРё
+Не закрыто:
+- Полная graceful shutdown оркестратора
+- VPS с расписанием и праздниками
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ .exe, РїРµСЂРµС…РѕРґ Рє Р°РІС‚РѕРЅРѕРјРЅРѕРјСѓ СЂРµР¶РёРјСѓ РЅР° VPS
+Следующий шаг:
+- Тестирование .exe, переход к автономному режиму на VPS
 ============================================================
 ============================================================
-Р”Р°С‚Р°: 2026-10-27
-РЎРµСЃСЃРёСЏ: startup human confirmation with Enter/Esc in main.py, console fixes, repo analysis
+Дата: 2026-10-27
+Сессия: startup human confirmation with Enter/Esc in main.py, console fixes, repo analysis
 ------------------------------------------------------------
-РЎРґРµР»Р°РЅРѕ:
-- РћР±РЅРѕРІР»С‘РЅ main.py СЃ Р±РѕР»СЊС€РёРј РїСЂРёРІРµС‚СЃС‚РІРёРµРј РїРѕ С†РµРЅС‚СЂСѓ, РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµРј Enter (РґР°) / Esc (РЅРµС‚) Р±РµР· РІРІРѕРґР°
-- run.bat СЃ chcp 65001 РґР»СЏ UTF-8, Р±РµР· Р»РёС€РЅРµРіРѕ pause
-- РџРµСЂРµСЃРѕР±СЂР°РЅС‹ exe СЃ hidden-import/add-data РґР»СЏ certs, pause РІ main
-- РџСЂРѕР°РЅР°Р»РёР·РёСЂРѕРІР°РЅС‹ РІСЃРµ С„Р°Р№Р»С‹ Рё git (rules, architecture, AGENTS, taps, ls-files), РІС‹РІРѕРґ: РїСЂРѕРµРєС‚ С†РµР»РѕСЃС‚РЅС‹Р№ 90%, Р»РёС€РЅРµРµ __pycache__/bool/old tests
-- РџСѓС€ main.py, run.bat, .gitignore (commits 3d66f89+)
-- РСЃРїСЂР°РІР»РµРЅС‹ encoding/mojibake РІ bat, console РЅРµ РїСЂРѕРїР°РґР°РµС‚
+Сделано:
+- Обновлён main.py с большим приветствием по центру, подтверждением Enter (да) / Esc (нет) без ввода
+- run.bat с chcp 65001 для UTF-8, без лишнего pause
+- Пересобраны exe с hidden-import/add-data для certs, pause в main
+- Проанализированы все файлы и git (rules, architecture, AGENTS, taps, ls-files), вывод: проект целостный 90%, лишнее __pycache__/bool/old tests
+- Пуш main.py, run.bat, .gitignore (commits 3d66f89+)
+- Исправлены encoding/mojibake в bat, console не пропадает
 
-РќРµ Р·Р°РєСЂС‹С‚Рѕ:
-- РџРѕР»РЅР°СЏ graceful shutdown РѕСЂРєРµСЃС‚СЂР°С‚РѕСЂР°
-- VPS СЃ СЂР°СЃРїРёСЃР°РЅРёРµРј, holidays, service, full e2e with real token, auto_execute=True
+Не закрыто:
+- Полная graceful shutdown оркестратора
+- VPS с расписанием, holidays, service, full e2e with real token, auto_execute=True
 
-РЎР»РµРґСѓСЋС‰РёР№ С€Р°Рі:
-- РўРµСЃС‚РёСЂРѕРІР°РЅРёРµ .exe СЃ real token, deploy РЅР° VPS, РѕР±РЅРѕРІР»РµРЅРёРµ README
+Следующий шаг:
+- Тестирование .exe с real token, deploy на VPS, обновление README
+============================================================
+============================================================
+Дата: 2026-10-29
+Сессия: full e2e test with human in console (Enter/Esc for startup, Y/N for buy), gap fix, retry for candles, stats in orchestrator, TG timeout but simulation
+------------------------------------------------------------
+Сделано:
+- Greeting and startup confirmation with Enter (yes) / Esc (no) in main.py
+- Interactive Y/N for buy proposals in supervisor.get_approval (console, executes buys in sandbox if Y)
+- Gap filter to percent with 0.00005 for 4-9 signals
+- Retry 3 times with sleep for GetCandles in analysis_agent to reduce UNAVAILABLE
+- Stats in orchestrator output (analyzed, candle errors, buy, proposals)
+- TEST_MODE and AUTO_EXECUTE in config for test
+- Multiple rebuilds of exe, run.bat with chcp for UTF-8
+- Analysis of repo and all files, project 90% integral, no big mess, лишнее __pycache__/bool/old tests
+- Test outputs with 5-12 buy, 3 proposals, 1-6 candle errors, TG timeout (mock and simulation work), portfolio reports in console
+- Pushes of code and logs
+
+Не закрыто:
+- Full graceful shutdown
+- TG with proxy or new token (timeout persists)
+- VPS with schedule, holidays, service, full e2e with real token, auto_execute=True after verification
+- Update README with instructions for .exe and VPS
+
+Следующий шаг:
+- Fix TG with proxy, full e2e with real token in sandbox, deploy to VPS, update README, continue test 1-2 weeks until stable
+
 ============================================================
