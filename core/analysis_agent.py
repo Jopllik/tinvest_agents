@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, List
 from datetime import datetime, timedelta
+import time
 
 from t_tech.invest import CandleInterval, HistoricCandle
 from core.client import invest_client
@@ -35,19 +36,27 @@ class AnalysisAgent:
         self.slow_period = 15     # медленная SMA
 
     def _get_candles(self, figi: str, days: int = 5) -> List[HistoricCandle]:
-        """Получаем минутные свечи за последние N дней"""
-        with invest_client.get_client() as client:
-            now = datetime.utcnow()
-            from_ = now - timedelta(days=days)
+        """Получаем минутные свечи за последние N дней с retry на UNAVAILABLE"""
+        for attempt in range(3):
+            try:
+                with invest_client.get_client() as client:
+                    now = datetime.utcnow()
+                    from_ = now - timedelta(days=days)
 
-            candles = client.market_data.get_candles(
-                figi=figi,
-                from_=from_,
-                to=now,
-                interval=CandleInterval.CANDLE_INTERVAL_15_MIN  # 15-минутные свечи
-            ).candles
+                    candles = client.market_data.get_candles(
+                        figi=figi,
+                        from_=from_,
+                        to=now,
+                        interval=CandleInterval.CANDLE_INTERVAL_15_MIN  # 15-минутные свечи
+                    ).candles
 
-            return candles
+                    return candles
+            except Exception as e:
+                if attempt == 2:
+                    raise
+                print(f"[{self.name}] Candle fetch attempt {attempt+1} failed: {e}. Retrying in {5 * (attempt+1)}s...")
+                time.sleep(5 * (attempt+1))
+        return []
 
     def _calculate_sma(self, prices: List[float], period: int) -> Optional[float]:
         if len(prices) < period:
@@ -105,13 +114,14 @@ class AnalysisAgent:
         signal = None
         reason = "Нет сигнала (нет пересечения)"
 
-        min_gap = 0.0  # for test to trigger proposals and bot
+        min_gap_percent = 0.00005  # 0.005% to have 4-9 signals per rules, not too strict
         gap = abs(sma_fast - sma_slow)
+        gap_percent = gap / sma_slow if sma_slow > 0 else 0
         crossed_up = prev_sma_fast <= prev_sma_slow and sma_fast > sma_slow
         crossed_down = prev_sma_fast >= prev_sma_slow and sma_fast < sma_slow
 
-        if (crossed_up or crossed_down) and gap < min_gap:
-            reason = f"Пересечение слишком слабое: разрыв {gap:.4f} < {min_gap:.4f}"
+        if (crossed_up or crossed_down) and gap_percent < min_gap_percent:
+            reason = f"Пересечение слишком слабое: разрыв {gap_percent:.4f}% < {min_gap_percent:.4f}%"
         elif crossed_up:
             signal = TradeSignal(
                 action="buy",

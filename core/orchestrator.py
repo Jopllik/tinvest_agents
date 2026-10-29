@@ -87,8 +87,11 @@ class Orchestrator:
         print("-" * 60)
         buy_signals = []
         signals_found = 0
+        analyzed = 0
+        candle_errors = 0
         for figi, name, approx_price in self.instruments:
             print(f"\n→ Анализируем {name} ({figi})")
+            analyzed += 1
 
             try:
                 result: AnalysisResult = analysis_agent.analyze(
@@ -96,6 +99,9 @@ class Orchestrator:
                     quantity=self.quantity,
                     order_value_rub=approx_price
                 )
+
+                if "Ошибка получения свечей" in result.reason or "UNAVAILABLE" in result.reason:
+                    candle_errors += 1
 
                 print(f"  Цена: {result.current_price:.2f} | "
                       f"SMA5: {result.sma_fast:.2f} | "
@@ -146,6 +152,8 @@ class Orchestrator:
 
             except Exception as e:
                 print(f"  ⚠ Ошибка при анализе {name}: {e}")
+                if any(k in str(e) for k in ["GetCandles", "UNAVAILABLE", "DEADLINE", "handshaker", "timed out"]):
+                    candle_errors += 1
 
         # Basket logic per rules.txt: CHE(0-100), AVE(100-500), EXP(500-1000)
         selected = []
@@ -189,7 +197,7 @@ class Orchestrator:
                 print(f"Годных <3 ({len(selected)}), предложение не отправляется.")
 
         print("\n" + "=" * 60)
-        print(f"[{self.name}] Цикл завершён | Buy-сигналов: {len(buy_signals)}, proposals={len(selected)}")
+        print(f"[{self.name}] Цикл завершён | Проанализировано: {analyzed} | Ошибка получения свечей: {candle_errors} | Buy-сигналов: {len(buy_signals)}, proposals={len(selected)}")
         print("=" * 60)
         return selected[:3] if len(selected) >= 3 else []
 

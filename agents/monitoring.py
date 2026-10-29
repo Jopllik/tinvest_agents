@@ -4,9 +4,10 @@ from core.risk_manager import risk_manager
 from core.config import settings
 from core.execution_agent import execution_agent, TradeSignal
 import telebot
-from telebot import types
+from telebot import types, apihelper
 import threading
 import time
+import os
 
 
 class MonitoringAgent(BaseAgent):
@@ -17,6 +18,10 @@ class MonitoringAgent(BaseAgent):
         self.pending_proposals = []
         self._bot_thread = None
         self.stop_event = threading.Event()
+        proxy_url = os.getenv('PROXY_URL')
+        if proxy_url:
+            apihelper.proxy = proxy_url
+            print(f"[{self.name}] Proxy set to {proxy_url}")
         if settings.TELEGRAM_BOT_TOKEN and self.chat_id:
             self.bot = telebot.TeleBot(settings.TELEGRAM_BOT_TOKEN)
             self._register_handlers()
@@ -128,6 +133,10 @@ class MonitoringAgent(BaseAgent):
 
     def send_buy_proposals(self, proposals: list):
         """Отправляет 3 предложения из корзин (ticker, lot_cost, gap%) в Telegram с кнопками buy/no."""
+        if settings.TEST_MODE:
+            print(f"[{self.name}] TEST_MODE: simulating buy confirmation without TG send")
+            self._send_decision_result("buy")
+            return True
         if not self.bot or not self.chat_id or not proposals:
             print(f"[{self.name}] Нет Telegram config или proposals. Fallback to console.")
             return False

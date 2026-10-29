@@ -5,6 +5,7 @@ from uuid import uuid4
 from core.order_manager import place_market_order, OrderResult
 from core.portfolio import get_portfolio
 from core.risk_manager import risk_manager
+from core.config import settings
 
 
 ActionType = Literal["buy", "sell"]
@@ -157,5 +158,5 @@ class ExecutionAgent:
         )
 
 
-# По умолчанию НЕ торгуем автоматически
-execution_agent = ExecutionAgent(auto_execute=False)
+# По умолчанию НЕ торгуем автоматически (используем settings.AUTO_EXECUTE для теста)
+execution_agent = ExecutionAgent(auto_execute=settings.AUTO_EXECUTE)

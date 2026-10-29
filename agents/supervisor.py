@@ -1,10 +1,11 @@
 from core.orchestrator import orchestrator
 from core.risk_manager import risk_manager
 from core.risk_models import risk_models
+from core.config import settings
 from agents.base_agent import BaseAgent
 from agents.research_news import ResearchNewsAgent
 from agents.monitoring import monitoring_agent
-from core.execution_agent import TradeSignal
+from core.execution_agent import TradeSignal, execution_agent
 from agents.monitoring import MonitoringAgent
 
 
@@ -30,13 +31,24 @@ class Supervisor(BaseAgent):
             print(f"[{self.name}] Ошибка обновления state: {e}")
 
     def get_approval(self, proposals: list) -> bool:
-        """Human-approval для покупок (rules.txt) via Telegram Monitoring."""
+        """Human-approval для покупок (rules.txt) in console for test."""
         if not proposals:
             return False
-        monitoring = MonitoringAgent()
-        sent = monitoring.send_buy_proposals(proposals)
-        self.state["human_approved"] = sent  # async via bot callback
-        return sent
+        print(f"[{self.name}] Получено {len(proposals)} proposals для подтверждения в консоли:")
+        for i, p in enumerate(proposals, 1):
+            signal, name, lot_cost, gap_percent = p[0], p[1], p[2], p[3]
+            print(f"{i}. {name} ({lot_cost:.0f}₽ gap={gap_percent:.3f}%)")
+        answer = input("Подтвердить покупку всех (Y/N): ").strip().lower()
+        if answer not in ['y', 'yes', 'да', 'д']:
+            print("Покупки отклонены.")
+            self.state["human_approved"] = False
+            return False
+        for p in proposals:
+            signal = p[0]
+            exec_result = execution_agent.execute(signal)
+            print(f"  {exec_result.message}")
+        self.state["human_approved"] = True
+        return True
 
     def run_full_cycle(self):
         """Полный цикл: news research -> update state -> risk check -> orchestrator -> final decision + TG if proposals."""

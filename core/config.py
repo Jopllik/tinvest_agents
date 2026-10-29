@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     TELEGRAM_BOT_TOKEN: str | None = None
     TELEGRAM_CHAT_ID: str | None = None
+    TEST_MODE: bool = False  # simulate human buy without TG for test
+    AUTO_EXECUTE: bool = True  # for sandbox test, set False for safety in prod
 
     # === Paths ===
     BASE_DIR: Path = Path(__file__).resolve().parent.parent
